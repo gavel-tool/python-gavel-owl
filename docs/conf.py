@@ -25,8 +25,8 @@ version = release = '0.0.0'
 pygments_style = 'trac'
 templates_path = ['.']
 extlinks = {
-    'issue': ('https://github.com/MGlauer/python-gavel-owl/issues/%s', '#'),
-    'pr': ('https://github.com/MGlauer/python-gavel-owl/pull/%s', 'PR #'),
+    'issue': ('https://github.com/gavel-tool/python-gavel-owl/issues/%s', '#'),
+    'pr': ('https://github.com/gavel-tool/python-gavel-owl/pull/%s', 'PR #'),
 }
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'

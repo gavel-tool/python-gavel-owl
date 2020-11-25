@@ -50,7 +50,7 @@ default_context:
     repo_hosting:              'github.com'
     repo_hosting_domain:       'github.com'
     repo_name:                 'python-gavel-owl'
-    repo_username:             'MGlauer'
+    repo_username:             'gavel-tool'
     requiresio:                'yes'
     scrutinizer:               'no'
     setup_py_uses_setuptools_scm: 'no'
