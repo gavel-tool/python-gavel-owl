@@ -31,9 +31,9 @@ setup(
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
     ),
-    author='Martin Glauer',
+    author='Anna Kleinau, Simon Flügel, Martin Glauer',
     author_email='martin.glauer@ovgu.de',
-    url='https://github.com/MGlauer/python-gavel-owl',
+    url='https://github.com/gavel-tool/python-gavel-owl',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
@@ -65,7 +65,7 @@ setup(
     project_urls={
         'Documentation': 'https://python-gavel-owl.readthedocs.io/',
         'Changelog': 'https://python-gavel-owl.readthedocs.io/en/latest/changelog.html',
-        'Issue Tracker': 'https://github.com/MGlauer/python-gavel-owl/issues',
+        'Issue Tracker': 'https://github.com/gavel-tool/python-gavel-owl/issues',
     },
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
