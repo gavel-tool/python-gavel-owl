@@ -73,6 +73,7 @@ setup(
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
         'click',
+        'gavel',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={
@@ -81,8 +82,6 @@ setup(
         #   ':python_version=="2.6"': ['argparse'],
     },
     entry_points={
-        'console_scripts': [
-            'gavel-owl = gavel_owl.cli:main',
-        ]
+        "gavel.plugins": "owl = gavel_owl",
     },
 )
