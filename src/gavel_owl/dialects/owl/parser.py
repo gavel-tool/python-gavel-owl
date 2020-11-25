@@ -7,4 +7,4 @@ from gavel.dialects.base.parser import Parseable, Target
 class OWLParser(parser.StringBasedParser):
 
     def parse(self, structure: Parseable, *args, **kwargs) -> Iterable[Target]:
-        pass
+        raise NotImplementedError
