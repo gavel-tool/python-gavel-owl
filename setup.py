@@ -82,6 +82,9 @@ setup(
         #   ':python_version=="2.6"': ['argparse'],
     },
     entry_points={
+        "cli": [
+            "gavel_owl = gavel_owl.cli:owl",
+        ],
         "gavel.plugins": "owl = gavel_owl",
     },
 )
