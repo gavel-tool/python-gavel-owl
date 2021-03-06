@@ -48,4 +48,5 @@ def stop_server():
     gateway.shutdown()
     print("stop_server done")
 
-
+owl.add_command(start_server)
+owl.add_command(stop_server)
