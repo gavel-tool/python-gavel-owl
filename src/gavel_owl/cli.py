@@ -35,3 +35,6 @@ def start_server(p):
 def stop_server():
     """Stop a running server"""
     raise NotImplementedError
+
+owl.add_command(start_server)
+owl.add_command(stop_server)
