@@ -55,7 +55,7 @@ class OWLParser(parser.StringBasedParser):
 
 
     def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
-        with subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-14.jar'], stdout=subprocess.PIPE,
+        with subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT, universal_newlines=True) as p:
 
             gateway = JavaGateway()
@@ -68,7 +68,6 @@ class OWLParser(parser.StringBasedParser):
                     sentence_enum = []
                     i = 0
                     for next_pair in app.translateOntology(IRI):
-
                         next_annotation = next_pair.getSecond()
                         py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
                         name = "axiom" + str(i)

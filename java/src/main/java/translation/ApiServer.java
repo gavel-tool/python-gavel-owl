@@ -10,7 +10,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import py4j.GatewayServer;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,27 @@ public class ApiServer {
     }
 
     public OWLOntology loadOntology(String origin) throws Exception {
+
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+        OWLOntology ontology = null;
+        try {
+            ontology = man.loadOntology(IRI.create(origin));
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();
+        } catch (OWLOntologyFactoryNotFoundException e) {
+            System.out.println("Failed to find this IRI, trying file instead.");
+            try {
+                ontology = man.loadOntologyFromOntologyDocument(new ByteArrayInputStream(origin.getBytes(StandardCharsets.UTF_8)));
+            } catch (OWLOntologyCreationException owlOntologyCreationException) {
+                owlOntologyCreationException.printStackTrace();
+            }
+        }
+        if (ontology == null) throw new Exception("Failed to find an IRI or a file with this name.");
+        return ontology;
+    }
+
+
+    public OWLOntology loadOntologyFromFile(String origin) throws Exception {
         // resolve shortcuts
         if (origin.toLowerCase().equals("pizza")) {
             origin = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
