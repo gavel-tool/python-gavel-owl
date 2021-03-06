@@ -15,38 +15,39 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 __all__ = ["owl"]
+
 import os
 import subprocess
 
 import click
 from py4j.java_gateway import JavaGateway
 
-app = None
-gateway = None
 
 @click.group()
 def owl():
     pass
 
+
 @click.command()
 @click.option("-p", default="0815", help="Port number")
 def start_server(p):
     """Start a server listening to port `p`"""
-    server = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-13.jar'], stdout=subprocess.PIPE,
-                     stderr=subprocess.STDOUT, universal_newlines=True)
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, universal_newlines=True)
 
-    gateway = JavaGateway()
+    for line in p.stdout:
+        print(line)
+        if "Server started" in str(line):
+            return 0
 
-    # create entry point
-    app = gateway.entry_point
-
-    print("start_server done")
 
 @click.command()
 def stop_server():
     """Stop a running server"""
+    gateway = JavaGateway()
     gateway.shutdown()
     print("stop_server done")
+
 
 owl.add_command(start_server)
 owl.add_command(stop_server)

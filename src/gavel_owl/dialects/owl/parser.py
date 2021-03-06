@@ -53,48 +53,41 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-
     def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
-        with subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
-                                  stderr=subprocess.STDOUT, universal_newlines=True) as p:
+        gateway = JavaGateway()
+        # create entry point
+        app = gateway.entry_point
 
-            gateway = JavaGateway()
-            # create entry point
-            app = gateway.entry_point
-            for line in p.stdout:
-                if "Server started" in str(line):
-                    print(line)
+        sentence_enum = []
+        i = 0
+        for next_pair in app.translateOntology(IRI):
+            next_annotation = next_pair.getSecond()
+            py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
+            name = "axiom" + str(i)
+            i = i + 1
+            # if (z == "") or (z in str(py_root)):
+            if True:
+                sentence = problem.AnnotatedFormula(
+                    logic="fof", name=name, role=problem.FormulaRole.AXIOM,
+                    formula=py_root, annotation=next_annotation)
+                sentence_enum.append(sentence)
+        inferences_enum = []
+        is_consistent = True
+        i = 0
 
-                    sentence_enum = []
-                    i = 0
-                    for next_pair in app.translateOntology(IRI):
-                        next_annotation = next_pair.getSecond()
-                        py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
-                        name = "axiom" + str(i)
-                        i = i + 1
-                        # if (z == "") or (z in str(py_root)):
-                        if True:
-                            sentence = problem.AnnotatedFormula(
-                                logic="fof", name=name, role=problem.FormulaRole.AXIOM,
-                                formula=py_root, annotation=next_annotation)
-                            sentence_enum.append(sentence)
-                    inferences_enum = []
-                    is_consistent = True
-                    i = 0
+        if not simple_mode:
+            print("Inferences:")
+            for inf in app.getInferences(IRI):
+                i += 1
+                inferences_enum.append(problem.AnnotatedFormula(
+                    logic="fof", name="inference" + str(i), role=problem.FormulaRole.CONJECTURE,
+                    formula=OWLParser.parseJavaToPython(node=inf.getFirst()), annotation=inf.getSecond()
+                ))
 
-                    if not simple_mode:
-                        print("Inferences:")
-                        for inf in app.getInferences(IRI):
-                            i += 1
-                            inferences_enum.append(problem.AnnotatedFormula(
-                                logic="fof", name="inference" + str(i), role=problem.FormulaRole.CONJECTURE,
-                                formula=OWLParser.parseJavaToPython(node=inf.getFirst()), annotation=inf.getSecond()
-                            ))
+            is_consistent = app.isConsistent()
 
-                        is_consistent = app.isConsistent()
+        gateway.shutdown()
 
-                    gateway.shutdown()
+        finalProblem = problem.Problem(sentence_enum, inferences_enum)
 
-                    finalProblem = problem.Problem(sentence_enum, inferences_enum)
-
-                    return finalProblem  # sentence_enum, inferences_enum, is_consistent
+        return finalProblem  # sentence_enum, inferences_enum, is_consistent
