@@ -1,0 +1,192 @@
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: : <http://openenergy-platform.org/ontology/oeo/>
+
+
+
+Ontology: <http://openenergy-platform.org/ontology/oeo/>
+<http://openenergy-platform.org/ontology/oeo/releases/v1.2.0/oeo.omn>
+Import: <http://openenergy-platform.org/ontology/oeo/releases/v1.2.0/oeo-model.omn>
+Import: <http://openenergy-platform.org/ontology/oeo/releases/v1.2.0/oeo-physical.omn>
+Import: <http://openenergy-platform.org/ontology/oeo/releases/v1.2.0/oeo-social.omn>
+Import: <https://raw.githubusercontent.com/BFO-ontology/BFO/v2.0/bfo.owl>
+
+Annotations: 
+    <http://purl.org/dc/elements/1.1/contributor> "(0001) Lukas Emele (@l-emele)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0002) Mirjam Stappel (@stap-m)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0003) Anna Kleinau (@akleinau)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0004) Janna Hastings (@jannahastings)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0005) Vera Sehn (@Vera-IER)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0006) Hannah Förster (@han-f)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0007) Patrick Kuckertz (@p-kuckertz)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0008) Carsten Hoyer-Klick (@carstenhoyerklick)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0009) Christian Hofmann (@christian-rli)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0010) Kevin Knosala (@k-knosala)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0011) Ludwig Hülk (@Ludee)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0012) Izzet Kilicarslan (@Izzet91)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0013) Franziska Drathschmidt (@fradra)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0014) Simon Flügel (@sfluegel05)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0015) Ulrich Frey (@litotes18)",
+    <http://purl.org/dc/elements/1.1/contributor> "(0023) Michaja Pehl (@0UmfHxcvx5J7JoaOhFSs5mncnisTJJ6q)",
+    <http://purl.org/dc/elements/1.1/contributor> "Christian Winger (@wingechr)",
+    <http://purl.org/dc/elements/1.1/contributor> "Fabian Neuhaus (@fabianneuhaus)",
+    <http://purl.org/dc/elements/1.1/contributor> "Lara Christmann",
+    <http://purl.org/dc/elements/1.1/contributor> "Martin Glauer (@MGlauer)",
+    <http://purl.org/dc/elements/1.1/contributor> "Pierre-Francois Duc (@Bachibouzouk)",
+    <http://purl.org/dc/elements/1.1/contributor> "Sebastian Cordes (@sebcordes)",
+    <http://purl.org/dc/elements/1.1/description> "The Open Energy Ontology is an ontology for all aspects of the energy modelling domain. 
+
+It is developed in three modules: 'oeo-model', a module for all entities related to models and modelling; 'oeo-physical', a module for all entities related to the world of energy and energy generation, and 'oeo-social' for all relevant social and economic aspects of the energy domain.",
+    <http://purl.org/dc/elements/1.1/license> "http://creativecommons.org/publicdomain/zero/1.0/",
+    <http://purl.org/dc/terms/title> "Open Energy Ontology"
+
+AnnotationProperty: <http://purl.obolibrary.org/obo/IAO_0000112>
+
+    
+AnnotationProperty: <http://purl.obolibrary.org/obo/IAO_0000115>
+
+    
+AnnotationProperty: <http://purl.obolibrary.org/obo/IAO_0000116>
+
+    
+AnnotationProperty: <http://purl.obolibrary.org/obo/IAO_0000119>
+
+    
+AnnotationProperty: <http://purl.obolibrary.org/obo/IAO_0000233>
+
+    
+AnnotationProperty: <http://purl.org/dc/elements/1.1/contributor>
+
+    
+AnnotationProperty: <http://purl.org/dc/elements/1.1/description>
+
+    
+AnnotationProperty: <http://purl.org/dc/elements/1.1/license>
+
+    
+AnnotationProperty: <http://purl.org/dc/terms/title>
+
+    
+AnnotationProperty: rdfs:comment
+
+    
+AnnotationProperty: rdfs:isDefinedBy
+
+    
+AnnotationProperty: rdfs:label
+
+    
+Datatype: rdf:PlainLiteral
+
+    
+ObjectProperty: <http://openenergy-platform.org/ontology/oeo/OEO_00000506>
+
+    
+ObjectProperty: <http://openenergy-platform.org/ontology/oeo/OEO_00000509>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/BFO_0000050>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/BFO_0000051>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/RO_0000057>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/RO_0002233>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/RO_0002234>
+
+    
+ObjectProperty: <http://purl.obolibrary.org/obo/RO_0002353>
+
+    
+ObjectProperty: owl:topObjectProperty
+
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00000064>
+
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00000335>
+
+    SubClassOf: 
+        <http://purl.obolibrary.org/obo/BFO_0000051> some <http://openenergy-platform.org/ontology/oeo/OEO_00010021>
+    
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00000340>
+
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00010021>
+
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00020011>
+
+    SubClassOf: 
+        <http://openenergy-platform.org/ontology/oeo/OEO_00000509> some <http://openenergy-platform.org/ontology/oeo/OEO_00140009>
+    
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00020012>
+
+    SubClassOf: 
+        <http://openenergy-platform.org/ontology/oeo/OEO_00000506> some <http://openenergy-platform.org/ontology/oeo/OEO_00000064>
+    
+    
+Class: <http://openenergy-platform.org/ontology/oeo/OEO_00140009>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000001>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000002>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000003>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000006>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000009>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000015>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000016>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000019>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000023>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000024>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000027>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000029>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000030>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000031>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000038>
+
+    
+Class: <http://purl.obolibrary.org/obo/BFO_0000141>
+
+    
+Class: <http://purl.obolibrary.org/obo/IAO_0000088>
+
+    

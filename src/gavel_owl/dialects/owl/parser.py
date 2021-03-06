@@ -6,6 +6,7 @@ import subprocess
 import gavel.logic.logic as logic
 import gavel.dialects.base.parser as parser
 
+
 class OWLParser(parser.StringBasedParser):
 
     @staticmethod
@@ -52,26 +53,22 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-    def parse(self, IRI, z="", simple_mode=False, *args, **kwargs):
-        simple = ''
-        if simple_mode:
-            simple = 'simple'
 
-        with subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-11.jar', IRI, simple], stdout=subprocess.PIPE,
-                              stderr=subprocess.STDOUT, universal_newlines=True) as p:
+    def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
+        with subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-14.jar'], stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, universal_newlines=True) as p:
+
+            gateway = JavaGateway()
+            # create entry point
+            app = gateway.entry_point
             for line in p.stdout:
                 if "Server started" in str(line):
                     print(line)
 
-                    gateway = JavaGateway()
-
-                    # create entry point
-                    app = gateway.entry_point
-
                     sentence_enum = []
                     i = 0
-                    while app.hasNextSentence():
-                        next_pair = app.nextSentence()
+                    for next_pair in app.translateOntology(IRI):
+
                         next_annotation = next_pair.getSecond()
                         py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
                         name = "axiom" + str(i)
@@ -88,8 +85,7 @@ class OWLParser(parser.StringBasedParser):
 
                     if not simple_mode:
                         print("Inferences:")
-                        while app.hasNextInference():
-                            inf = app.nextInference()
+                        for inf in app.getInferences(IRI):
                             i += 1
                             inferences_enum.append(problem.AnnotatedFormula(
                                 logic="fof", name="inference" + str(i), role=problem.FormulaRole.CONJECTURE,
@@ -102,4 +98,4 @@ class OWLParser(parser.StringBasedParser):
 
                     finalProblem = problem.Problem(sentence_enum, inferences_enum)
 
-                    return finalProblem #sentence_enum, inferences_enum, is_consistent
+                    return finalProblem  # sentence_enum, inferences_enum, is_consistent

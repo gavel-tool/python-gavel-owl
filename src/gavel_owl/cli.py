@@ -16,9 +16,13 @@ Why does this file exist, and why not put this in __main__?
 """
 __all__ = ["owl"]
 import os
+import subprocess
 
 import click
+from py4j.java_gateway import JavaGateway
 
+app = None
+gateway = None
 
 @click.group()
 def owl():
@@ -28,10 +32,20 @@ def owl():
 @click.option("-p", default="0815", help="Port number")
 def start_server(p):
     """Start a server listening to port `p`"""
-    raise NotImplementedError
+    server = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-13.jar'], stdout=subprocess.PIPE,
+                     stderr=subprocess.STDOUT, universal_newlines=True)
 
+    gateway = JavaGateway()
+
+    # create entry point
+    app = gateway.entry_point
+
+    print("start_server done")
 
 @click.command()
 def stop_server():
     """Stop a running server"""
-    raise NotImplementedError
+    gateway.shutdown()
+    print("stop_server done")
+
+

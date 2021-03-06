@@ -1,0 +1,7 @@
+1. LoadOntology
+2. NewOntology
+4. Replacing
+5. Visitor
+6. Reasoner
+3. HandlingIndividuals
+7. Task5
