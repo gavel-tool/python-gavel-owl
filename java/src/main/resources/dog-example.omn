@@ -1,0 +1,25 @@
+Prefix: : <http://ex.com/owl/>
+Prefix: a: <http://ex.com/owl/>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+
+
+Ontology: <http://example.com/owl/families> <http://example.com/owl/families-v1>
+
+ObjectProperty: has_part
+ObjectProperty: consists_of
+
+Class: Dog
+Class: a:Mammal
+Class: Dog
+SubClassOf: a:Mammal
+SubClassOf: has_part some Tail
+Class: Tail
+
+Class: TailyAnimal
+    EquivalentTo: has_part some Tail
+
+Class: Couple
+     EquivalentTo: consists_of exactly 2
+
+Class: Hand
+    SubClassOf: owl:Nothing
