@@ -1,0 +1,1 @@
+fof(conj1,conjecture,(![X]:(pizza_owl_American(X) => pizza_owl_NamedPizza(X)))).

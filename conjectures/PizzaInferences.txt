@@ -1,0 +1,5 @@
+fof(conj1,conjecture,(![X]:(pizza_owl_American(X) => pizza_owl_InterestingPizza(X)))).
+fof(conj1,conjecture,(![X]:(pizza_owl_American(X) => pizza_owl_CheeseyPizza(X)))).
+fof(conj1,conjecture,(![X]:(pizza_owl_Cajun(X) => pizza_owl_NonVegetarianPizza(X)))).
+fof(conj1,conjecture,(![X]:(pizza_owl_MeatyPizza(X) => pizza_owl_NonVegetarianPizza(X)))).
+fof(conj1,conjecture,(![X]:(pizza_owl_RealItalianPizza(X) => pizza_owl_ThinAndCrispyPizza(X)))).

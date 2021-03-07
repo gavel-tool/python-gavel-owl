@@ -1,0 +1,2 @@
+fof(conj1,conjecture,(![X]:(pizza_owl_NutTopping(X)))).
+fof(conj1,conjecture,(![X]:(pizza_owl_PizzaTopping(X)))).

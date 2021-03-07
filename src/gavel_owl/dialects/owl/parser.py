@@ -86,8 +86,6 @@ class OWLParser(parser.StringBasedParser):
 
             is_consistent = app.isConsistent()
 
-        gateway.shutdown()
-
         finalProblem = problem.Problem(sentence_enum, inferences_enum)
 
         return finalProblem  # sentence_enum, inferences_enum, is_consistent

@@ -18,9 +18,12 @@ __all__ = ["owl"]
 
 import os
 import subprocess
-
+import gavel.dialects.base.dialect as dialect
+import gavel.logic.problem as problem
+from gavel.dialects.tptp.parser import TPTPParser
 import click
 from py4j.java_gateway import JavaGateway
+from gavel.prover.vampire.interface import VampireInterface
 
 
 @click.group()
@@ -48,6 +51,40 @@ def stop_server():
     gateway.shutdown()
     print("stop_server done")
 
+@click.command()
+@click.argument("f") #file
+@click.argument("c") #conjectures
+@click.option("--steps", is_flag=True, default=False)
+def owl_prove(f, c, steps):
+    axiomParser = dialect.get_dialect("owl")._parser_cls()
+    conjParser = dialect.get_dialect("tptp")._parser_cls()
+    compiler = dialect.get_dialect("tptp")._compiler_cls()
+    sentence_enum = []
+    conjecture_enum = []
+    with open(f, "r") as finp:
+        owlProblem = axiomParser.parse(finp.read())
+    with open(c, "r") as finp:
+        tptpProblem = conjParser.parse(finp.read())
+    sentence_enum = owlProblem.premises
+    conjecture_enum = owlProblem.conjectures + tptpProblem.conjectures
+    for x in sentence_enum:
+        print(x)
+    print("")
+    print("Conjecture:")
+    prover = VampireInterface()
+    for x in conjecture_enum:
+        print(x)
+        owl_problem = problem.Problem(premises=sentence_enum, conjectures=[x])
+        fol_proof = prover.prove(owl_problem)
+
+        if steps:
+            print("")
+            print("Proof:")
+            for steps in fol_proof.steps:
+                print(steps)
+        else:
+            print(fol_proof.status._name + ": " + fol_proof.status._description)
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
+owl.add_command(owl_prove)
