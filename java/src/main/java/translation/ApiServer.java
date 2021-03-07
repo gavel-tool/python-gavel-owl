@@ -41,18 +41,11 @@ public class ApiServer {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
         OWLOntology ontology = null;
         try {
-            ontology = man.loadOntology(IRI.create(origin));
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();
-        } catch (OWLOntologyFactoryNotFoundException e) {
-            System.out.println("Failed to find this IRI, trying file instead.");
-            try {
-                ontology = man.loadOntologyFromOntologyDocument(new ByteArrayInputStream(origin.getBytes(StandardCharsets.UTF_8)));
-            } catch (OWLOntologyCreationException owlOntologyCreationException) {
-                owlOntologyCreationException.printStackTrace();
-            }
+            ontology = man.loadOntologyFromOntologyDocument(new ByteArrayInputStream(origin.getBytes(StandardCharsets.UTF_8)));
+        } catch (OWLOntologyCreationException owlOntologyCreationException) {
+            owlOntologyCreationException.printStackTrace();
         }
-        if (ontology == null) throw new Exception("Failed to find an IRI or a file with this name.");
+        if (ontology == null) throw new Exception("Failed to read file.");
         return ontology;
     }
 
