@@ -20,6 +20,7 @@ import os
 import subprocess
 import gavel.dialects.base.dialect as dialect
 import gavel.logic.problem as problem
+import gavel.prover as prover
 from gavel.dialects.tptp.parser import TPTPParser
 import click
 from py4j.java_gateway import JavaGateway
@@ -36,7 +37,7 @@ def owl():
 def start_server(p):
     """Start a server listening to port `p`"""
     p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT, universal_newlines=True)
+                         stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
         print(line)
@@ -51,39 +52,35 @@ def stop_server():
     gateway.shutdown()
     print("stop_server done")
 
+
 @click.command()
-@click.argument("f") #file
-@click.argument("c") #conjectures
+@click.argument("f")  # file
+@click.argument("c")  # conjectures
 @click.option("--steps", is_flag=True, default=False)
 def owl_prove(f, c, steps):
-    axiomParser = dialect.get_dialect("owl")._parser_cls()
-    conjParser = dialect.get_dialect("tptp")._parser_cls()
-    compiler = dialect.get_dialect("tptp")._compiler_cls()
-    sentence_enum = []
-    conjecture_enum = []
+    owlParser = dialect.get_dialect("owl")()
+    tptpParser = dialect.get_dialect("tptp")()
     with open(f, "r") as finp:
-        owlProblem = axiomParser.parse(finp.read())
+        owlProblem = owlParser.parse(finp.read())
     with open(c, "r") as finp:
-        tptpProblem = conjParser.parse(finp.read())
+        tptpProblem = tptpParser.parse(finp.read())
     sentence_enum = owlProblem.premises
     conjecture_enum = owlProblem.conjectures + tptpProblem.conjectures
     for x in sentence_enum:
         print(x)
     print("")
     print("Conjecture:")
-    prover = VampireInterface()
+    VampProver = prover.registry.get_prover("vampire")()
     for x in conjecture_enum:
         print(x)
         owl_problem = problem.Problem(premises=sentence_enum, conjectures=[x])
-        fol_proof = prover.prove(owl_problem)
-
+        fol_proof = VampProver.prove(problem=owl_problem)
+        print(fol_proof.status._name + ": " + fol_proof.status._description)
         if steps:
             print("")
             print("Proof:")
-            for steps in fol_proof.steps:
-                print(steps)
-        else:
-            print(fol_proof.status._name + ": " + fol_proof.status._description)
+            for step in list(fol_proof.steps):
+                print(step)
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
