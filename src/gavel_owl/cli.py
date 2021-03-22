@@ -87,13 +87,16 @@ def owl_prove(f, c, steps):
 def check_consistency(o):
     """Check if an ontology is consistent"""
 
-    with open(o) as finp:
-        ontology = finp.read(o)
+    with open(o, "r") as finp:
+        ontology = finp.read()
     gateway = JavaGateway()
     # create entry point
     app = gateway.entry_point
 
-    return app.isConsistent(ontology)
+    if app.isConsistent(ontology):
+        print("Ontology is consistent")
+    else:
+        print("Ontology is inconsistent")
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
