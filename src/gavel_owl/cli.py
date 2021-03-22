@@ -82,6 +82,20 @@ def owl_prove(f, c, steps):
             for step in list(fol_proof.steps):
                 print(step)
 
+@click.command()
+@click.argument("o") # ontology
+def check_consistency(o):
+    """Check if an ontology is consistent"""
+
+    with open(o) as finp:
+        ontology = finp.read(o)
+    gateway = JavaGateway()
+    # create entry point
+    app = gateway.entry_point
+
+    return app.isConsistent(ontology)
+
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
+owl.add_command(check_consistency)
