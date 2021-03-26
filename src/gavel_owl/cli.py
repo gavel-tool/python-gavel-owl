@@ -60,8 +60,9 @@ def stop_server(pp, jp):
 @click.argument("f")  # file
 @click.argument("c")  # conjectures
 @click.option("--steps", is_flag=True, default=False)
-@click.option("-p", default="25333", help="Port number")
-def owl_prove(f, c, steps):
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def owl_prove(f, c, steps, pp, jp):
     """prove tptp conjectures using an owl ontology for premises"""
     #load and translate files
     owlParser = dialect.get_dialect("owl")()
@@ -91,12 +92,15 @@ def owl_prove(f, c, steps):
 
 @click.command()
 @click.argument("o") # ontology
-def check_consistency(o):
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def check_consistency(o, jp, pp):
     """Check if an ontology is consistent"""
 
     with open(o, "r") as finp:
         ontology = finp.read()
-    gateway = JavaGateway()
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
     # create entry point
     app = gateway.entry_point
 
@@ -105,7 +109,25 @@ def check_consistency(o):
     else:
         print("Ontology is inconsistent")
 
+@click.command()
+@click.argument("frm")
+@click.argument("to")
+@click.argument("path")
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def translateP(frm, to, path, pp, jp):
+    input_dialect = dialect.get_dialect(frm)
+    output_dialect = dialect.get_dialect(to)
+
+    parser = input_dialect._parser_cls()
+    compiler = output_dialect._compiler_cls()
+    with open(path, "r") as finp:
+        print(compiler.visit(parser.parse(finp.read(), pp=int(pp), jp=int(jp))))
+
+
+
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
+owl.add_command(translateP)

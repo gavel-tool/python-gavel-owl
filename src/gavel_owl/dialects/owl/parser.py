@@ -1,7 +1,7 @@
 from typing import Iterable
 from gavel.dialects.base.parser import Parseable, Target
 import gavel.logic.problem as problem
-from py4j.java_gateway import JavaGateway
+from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 import subprocess
 import gavel.logic.logic as logic
 import gavel.dialects.base.parser as parser
@@ -53,8 +53,9 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-    def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
-        gateway = JavaGateway(port)
+    def parse(self, IRI, z="", simple_mode=True, jp=25333, pp=25334, *args, **kwargs):
+        gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                              callback_server_parameters=CallbackServerParameters(port=int(pp)))
         # create entry point
         app = gateway.entry_point
 
