@@ -12,20 +12,30 @@ import py4j.GatewayServer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
 
 public class ApiServer {
     public static final boolean USE_FULL_IRI = false;
 
     public static void main(String[] args) throws Exception {
-        ApiServer app = new ApiServer();
+        //arg0 is the java port, arg1 the python port
+        ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
     }
 
-    public ApiServer() {
+    public ApiServer(int jp, int pp) throws UnknownHostException {
+        //jp is the java port, pp the python port
         // app is now the gateway.entry_point, create server
-        GatewayServer server = new GatewayServer(this);
+        GatewayServer server = new GatewayServer.GatewayServerBuilder()
+            .javaPort(jp)
+            .javaAddress(InetAddress.getByName("127.0.0.1"))
+            .callbackClient(pp, InetAddress.getByName("127.0.0.1"))
+            .build();
         server.start();
         System.out.println("Server started");
     }

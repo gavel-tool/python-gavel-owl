@@ -23,9 +23,8 @@ import gavel.logic.problem as problem
 import gavel.prover as prover
 from gavel.dialects.tptp.parser import TPTPParser
 import click
-from py4j.java_gateway import JavaGateway
+from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 from gavel.prover.vampire.interface import VampireInterface
-
 
 @click.group()
 def owl():
@@ -33,10 +32,11 @@ def owl():
 
 
 @click.command()
-@click.option("-p", default="0815", help="Port number")
-def start_server(p):
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def start_server(jp, pp):
     """Start a server listening to port `p`"""
-    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-17.jar', jp, pp], stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
@@ -46,9 +46,12 @@ def start_server(p):
 
 
 @click.command()
-def stop_server():
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def stop_server(pp, jp):
     """Stop a running server"""
-    gateway = JavaGateway()
+    gateway = JavaGateway(gateway_parameters= GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
     gateway.shutdown()
     print("stop_server done")
 
@@ -57,7 +60,10 @@ def stop_server():
 @click.argument("f")  # file
 @click.argument("c")  # conjectures
 @click.option("--steps", is_flag=True, default=False)
+@click.option("-p", default="25333", help="Port number")
 def owl_prove(f, c, steps):
+    """prove tptp conjectures using an owl ontology for premises"""
+    #load and translate files
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
     with open(f, "r") as finp:
@@ -69,6 +75,7 @@ def owl_prove(f, c, steps):
     for x in sentence_enum:
         print(x)
     print("")
+    #prove using the vampire prover
     print("Conjecture:")
     VampProver = prover.registry.get_prover("vampire")()
     for x in conjecture_enum:

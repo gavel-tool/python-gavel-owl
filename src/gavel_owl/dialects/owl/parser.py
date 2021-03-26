@@ -54,7 +54,7 @@ class OWLParser(parser.StringBasedParser):
             return logic.Type(node.getName())
 
     def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
-        gateway = JavaGateway()
+        gateway = JavaGateway(port)
         # create entry point
         app = gateway.entry_point
 
