@@ -53,7 +53,10 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-    def parse(self, IRI, z="", simple_mode=True, jp=25333, pp=25334, *args, **kwargs):
+    def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
+        jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
+        pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
+        
         gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                               callback_server_parameters=CallbackServerParameters(port=int(pp)))
         # create entry point

@@ -109,20 +109,23 @@ def check_consistency(o, jp, pp):
     else:
         print("Ontology is inconsistent")
 
-@click.command()
+@click.command(name='translatep', context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
 @click.argument("frm")
 @click.argument("to")
 @click.argument("path")
-@click.option("-jp", default="25333", help="Java Port number")
-@click.option("-pp", default="25334", help="Python Port number")
-def translateP(frm, to, path, pp, jp):
+@click.pass_context
+def translateP(ctx, frm, to, path):
+    data = {ctx.args[i].strip('-'): ctx.args[i+1] for i in range(0, len(ctx.args), 2)}
     input_dialect = dialect.get_dialect(frm)
     output_dialect = dialect.get_dialect(to)
 
     parser = input_dialect._parser_cls()
     compiler = output_dialect._compiler_cls()
     with open(path, "r") as finp:
-        print(compiler.visit(parser.parse(finp.read(), pp=int(pp), jp=int(jp))))
+        print(compiler.visit(parser.parse(finp.read(), **data)))
 
 
 

@@ -31,7 +31,7 @@ public class ApiServer {
     public ApiServer(int jp, int pp) throws UnknownHostException {
         //jp is the java port, pp the python port
         // app is now the gateway.entry_point, create server
-        GatewayServer server = new GatewayServer.GatewayServerBuilder()
+        GatewayServer server = new GatewayServer.GatewayServerBuilder(this)
             .javaPort(jp)
             .javaAddress(InetAddress.getByName("127.0.0.1"))
             .callbackClient(pp, InetAddress.getByName("127.0.0.1"))
