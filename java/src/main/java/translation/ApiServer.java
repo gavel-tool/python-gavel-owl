@@ -16,6 +16,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -26,6 +28,15 @@ public class ApiServer {
     public static void main(String[] args) throws Exception {
         //arg0 is the java port, arg1 the python port
         ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+
+        /*
+        Scanner scn = new Scanner(new File("src/main/resources/pizzaFile.owl"));
+        StringBuilder ontologyText = new StringBuilder();
+        while (scn.hasNext()) {
+            ontologyText.append(scn.nextLine()).append("\n");
+        }
+        System.out.println(Arrays.toString(app.translateOntology(ontologyText.toString())));
+         */
     }
 
     public ApiServer(int jp, int pp) throws UnknownHostException {
@@ -40,18 +51,18 @@ public class ApiServer {
         System.out.println("Server started");
     }
 
-    public boolean isConsistent(String origin) throws Exception {
+    public boolean isConsistent(String ontologyText) throws Exception {
         OWLReasonerFactory rf = new ReasonerFactory();
-        OWLReasoner r = rf.createReasoner(loadOntology(origin));
+        OWLReasoner r = rf.createReasoner(loadOntology(ontologyText));
         return r.isConsistent();
     }
 
-    public OWLOntology loadOntology(String origin) throws Exception {
-
+    public OWLOntology loadOntology(String ontologyText) throws Exception {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
         OWLOntology ontology = null;
         try {
-            ontology = man.loadOntologyFromOntologyDocument(new ByteArrayInputStream(origin.getBytes(StandardCharsets.UTF_8)));
+            ontology = man.loadOntologyFromOntologyDocument(
+                new ByteArrayInputStream(ontologyText.getBytes(StandardCharsets.UTF_8)));
         } catch (OWLOntologyCreationException owlOntologyCreationException) {
             owlOntologyCreationException.printStackTrace();
         }
@@ -59,7 +70,7 @@ public class ApiServer {
         return ontology;
     }
 
-
+    // not used anymore
     public OWLOntology loadOntologyFromFile(String origin) throws Exception {
         // resolve shortcuts
         if (origin.toLowerCase().equals("pizza")) {
@@ -85,14 +96,14 @@ public class ApiServer {
         return ontology;
     }
 
-    public AnnotatedLogicElement[] translateOntology(String origin) throws Exception {
+    public AnnotatedLogicElement[] translateOntology(String ontologyText) throws Exception {
         System.out.println("Starting Translation");
-        OntologyTranslator translator = new OntologyTranslator(loadOntology(origin), false);
+        OntologyTranslator translator = new OntologyTranslator(loadOntology(ontologyText), false);
         return translator.translate().toArray(new AnnotatedLogicElement[0]);
     }
 
-    public AnnotatedLogicElement[] getInferences(String origin) throws Exception {
-        OWLOntology ontology = loadOntology(origin);
+    public AnnotatedLogicElement[] getInferences(String ontologyText) throws Exception {
+        OWLOntology ontology = loadOntology(ontologyText);
         try {
             OWLReasonerFactory rf = new ReasonerFactory();
             OWLReasoner r = rf.createReasoner(ontology);

@@ -16,15 +16,12 @@ Why does this file exist, and why not put this in __main__?
 """
 __all__ = ["owl"]
 
-import os
 import subprocess
 import gavel.dialects.base.dialect as dialect
 import gavel.logic.problem as problem
 import gavel.prover as prover
-from gavel.dialects.tptp.parser import TPTPParser
 import click
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
-from gavel.prover.vampire.interface import VampireInterface
 
 @click.group()
 def owl():
@@ -35,7 +32,7 @@ def owl():
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def start_server(jp, pp):
-    """Start a server listening to port `p`"""
+    """Start a server listening to java port `jp` and python port `pp`"""
     p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-17.jar', jp, pp], stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
@@ -53,7 +50,7 @@ def stop_server(pp, jp):
     gateway = JavaGateway(gateway_parameters= GatewayParameters(port=int(jp)),
                           callback_server_parameters=CallbackServerParameters(port=int(pp)))
     gateway.shutdown()
-    print("stop_server done")
+    print("Server stopped")
 
 
 @click.command()
@@ -68,7 +65,7 @@ def owl_prove(f, c, steps, pp, jp):
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
     with open(f, "r") as finp:
-        owlProblem = owlParser.parse(finp.read())
+        owlProblem = owlParser.parse(finp.read()) # TODO: add ports
     with open(c, "r") as finp:
         tptpProblem = tptpParser.parse(finp.read())
     sentence_enum = owlProblem.premises

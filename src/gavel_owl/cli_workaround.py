@@ -5,7 +5,7 @@ from gavel.dialects.base.dialect import get_dialect
 import gavel.cli
 
 #start_server()
-#gavel.cli.translate(["owl", "tptp", "Pizza.owl"])
+gavel.cli.translate(["owl", "tptp", "Pizza.owl"])
 #stop_server()
 
 parser = OWLParser()
