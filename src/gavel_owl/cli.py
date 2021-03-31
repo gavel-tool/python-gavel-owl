@@ -32,13 +32,13 @@ def owl():
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def start_server(jp, pp):
-    """Start a server listening to java port `jp` and python port `pp`"""
+    """Start a server listening to ports `jp` and `pp`"""
     p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-17.jar', jp, pp], stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
-        print(line)
         if "Server started" in str(line):
+            print(line)
             return 0
 
 
@@ -54,18 +54,18 @@ def stop_server(pp, jp):
 
 
 @click.command()
-@click.argument("f")  # file
-@click.argument("c")  # conjectures
+@click.argument("f", "OWL ontology file")  # file
+@click.argument("c", "TPTP conjectures file")  # conjectures
 @click.option("--steps", is_flag=True, default=False)
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def owl_prove(f, c, steps, pp, jp):
-    """prove tptp conjectures using an owl ontology for premises"""
+    """prove TPTP conjectures using OWL premises"""
     #load and translate files
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
     with open(f, "r") as finp:
-        owlProblem = owlParser.parse(finp.read()) # TODO: add ports
+        owlProblem = owlParser.parse(finp.read(), jp=jp, pp=pp)
     with open(c, "r") as finp:
         tptpProblem = tptpParser.parse(finp.read())
     sentence_enum = owlProblem.premises
@@ -88,7 +88,7 @@ def owl_prove(f, c, steps, pp, jp):
                 print(step)
 
 @click.command()
-@click.argument("o") # ontology
+@click.argument("o", help="Ontology") # ontology
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def check_consistency(o, jp, pp):
