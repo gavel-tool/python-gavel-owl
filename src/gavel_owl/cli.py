@@ -54,19 +54,19 @@ def stop_server(pp, jp):
 
 
 @click.command()
-@click.argument("f", "OWL ontology file")  # file
-@click.argument("c", "TPTP conjectures file")  # conjectures
+@click.argument("file")  # OWL ontology file
+@click.argument("conjectures")  # TPTP conjecture file
 @click.option("--steps", is_flag=True, default=False)
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
-def owl_prove(f, c, steps, pp, jp):
+def owl_prove(file, conjectures, steps, pp, jp):
     """prove TPTP conjectures using OWL premises"""
     #load and translate files
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
-    with open(f, "r") as finp:
+    with open(file, "r") as finp:
         owlProblem = owlParser.parse(finp.read(), jp=jp, pp=pp)
-    with open(c, "r") as finp:
+    with open(conjectures, "r") as finp:
         tptpProblem = tptpParser.parse(finp.read())
     sentence_enum = owlProblem.premises
     conjecture_enum = owlProblem.conjectures + tptpProblem.conjectures
@@ -74,7 +74,7 @@ def owl_prove(f, c, steps, pp, jp):
         print(x)
     print("")
     #prove using the vampire prover
-    print("Conjecture:")
+    print("Conjectures:")
     VampProver = prover.registry.get_prover("vampire")()
     for x in conjecture_enum:
         print(x)
@@ -88,13 +88,13 @@ def owl_prove(f, c, steps, pp, jp):
                 print(step)
 
 @click.command()
-@click.argument("o", help="Ontology") # ontology
+@click.argument("ontology") # ontology
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
-def check_consistency(o, jp, pp):
+def check_consistency(ontology, jp, pp):
     """Check if an ontology is consistent"""
 
-    with open(o, "r") as finp:
+    with open(ontology, "r") as finp:
         ontology = finp.read()
     gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                           callback_server_parameters=CallbackServerParameters(port=int(pp)))
