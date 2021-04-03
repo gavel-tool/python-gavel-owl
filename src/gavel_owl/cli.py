@@ -65,11 +65,11 @@ def owl_prove(file, conjectures, steps, pp, jp):
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
     with open(file, "r") as finp:
-        owlProblem = owlParser.parse(finp.read(), jp=jp, pp=pp)
+        owl_translation = owlParser.parse(finp.read(), jp=jp, pp=pp)
     with open(conjectures, "r") as finp:
         tptpProblem = tptpParser.parse(finp.read())
-    sentence_enum = owlProblem.premises
-    conjecture_enum = owlProblem.conjectures + tptpProblem.conjectures
+    sentence_enum = owl_translation.premises
+    conjecture_enum = owl_translation.conjectures + tptpProblem.conjectures
     for x in sentence_enum:
         print(x)
     print("")
@@ -106,6 +106,34 @@ def check_consistency(ontology, jp, pp):
     else:
         print("Ontology is inconsistent")
 
+@click.command()
+@click.argument("ontology") # ontology
+@click.option("--steps", is_flag=True, default=False)
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def compare_consistency(ontology, steps, jp, pp):
+    """Translate an ontology an compare the consistency of original and translation"""
+    with open(ontology, "r") as finp:
+        ontology = finp.read()
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
+    # create entry point
+    app = gateway.entry_point
+    owl_consistency = app.isConsistent(ontology)
+    owlParser = dialect.get_dialect("owl")()
+    owl_translation = owlParser.parse(ontology, jp=25335, pp=25336)
+    VampProver = prover.registry.get_prover("vampire")()
+    fol_proof = VampProver.prove(problem=owl_translation)
+
+    print(f'Consistency according to OWL reasoner: {owl_consistency}')
+    print(f'Result according to FOL reasoner: {fol_proof.status._name}: {fol_proof.status._description}')
+    if steps:
+        print("")
+        print("Proof:")
+        #for step in list(fol_proof.steps):
+         #   print(step)
+
+
 @click.command(name='translatep', context_settings=dict(
     ignore_unknown_options=True,
     allow_extra_args=True,
@@ -131,3 +159,4 @@ owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
 owl.add_command(translateP)
+owl.add_command(compare_consistency)

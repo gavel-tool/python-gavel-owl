@@ -8,16 +8,15 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.util.ShortFormFromRDFSLabelAxiomListProvider;
 import py4j.GatewayServer;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -36,7 +35,9 @@ public class ApiServer {
             ontologyText.append(scn.nextLine()).append("\n");
         }
         System.out.println(Arrays.toString(app.translateOntology(ontologyText.toString())));
-         */
+        System.out.println(app.getNameMapping(ontologyText.toString()));
+        */
+
     }
 
     public ApiServer(int jp, int pp) throws UnknownHostException {
@@ -70,36 +71,22 @@ public class ApiServer {
         return ontology;
     }
 
-    // not used anymore
-    public OWLOntology loadOntologyFromFile(String origin) throws Exception {
-        // resolve shortcuts
-        if (origin.toLowerCase().equals("pizza")) {
-            origin = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
-        } else if (origin.toLowerCase().equals("oeo")) {
-            origin = "https://openenergy-platform.org/ontology/oeo/";
-        }
-        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-        OWLOntology ontology = null;
-        try {
-            ontology = man.loadOntology(IRI.create(origin));
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();
-        } catch (OWLOntologyFactoryNotFoundException e) {
-            System.out.println("Failed to find this IRI, trying file instead.");
-            try {
-                ontology = man.loadOntologyFromOntologyDocument(new File(origin));
-            } catch (OWLOntologyCreationException owlOntologyCreationException) {
-                owlOntologyCreationException.printStackTrace();
-            }
-        }
-        if (ontology == null) throw new Exception("Failed to find an IRI or a file with this name.");
-        return ontology;
-    }
-
     public AnnotatedLogicElement[] translateOntology(String ontologyText) throws Exception {
         System.out.println("Starting Translation");
         OntologyTranslator translator = new OntologyTranslator(loadOntology(ontologyText), false);
         return translator.translate().toArray(new AnnotatedLogicElement[0]);
+    }
+
+    public HashMap<String, String> getNameMapping(String ontologyText) throws Exception {
+        OWLOntology ontology = loadOntology(ontologyText);
+        ontology.signature(Imports.INCLUDED).forEach(HasIRI::getIRI);
+        ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
+            new ArrayList<>(),
+            ontology.axioms(Imports.INCLUDED).collect(Collectors.toList()));
+        HashMap<String, String> mapping = new HashMap<>();
+        ontology.signature(Imports.INCLUDED).
+            forEach(x -> mapping.put(x.getIRI().toString(), labelProvider.getShortForm(x)));
+        return mapping;
     }
 
     public AnnotatedLogicElement[] getInferences(String ontologyText) throws Exception {
