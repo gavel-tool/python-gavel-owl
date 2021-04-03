@@ -1,7 +1,7 @@
 from typing import Iterable
 from gavel.dialects.base.parser import Parseable, Target
 import gavel.logic.problem as problem
-from py4j.java_gateway import JavaGateway
+from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 import subprocess
 import gavel.logic.logic as logic
 import gavel.dialects.base.parser as parser
@@ -34,7 +34,6 @@ class OWLParser(parser.StringBasedParser):
                 OWLParser.parseJavaToPython(node.getLeft()), OWLParser.parseJavaToPython(node.getOp()),
                 OWLParser.parseJavaToPython(node.getRight()))
         elif node.getVisitName() == "predicate_expression":
-            # TODO: find out how to handle lists like arguments
             arguments = []
             for arg in node.getArguments():
                 arguments.append(OWLParser.parseJavaToPython(arg))
@@ -53,38 +52,37 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-    def parse(self, IRI, z="", simple_mode=True, *args, **kwargs):
-        gateway = JavaGateway()
+    def parse(self, ontology, z="", simple_mode=True, *args, **kwargs):
+        jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
+        pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
+
+        gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                              callback_server_parameters=CallbackServerParameters(port=int(pp)))
         # create entry point
         app = gateway.entry_point
 
         sentence_enum = []
         i = 0
-        for next_pair in app.translateOntology(IRI):
+        for next_pair in app.translateOntology(ontology):
             next_annotation = next_pair.getSecond()
             py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
             name = "axiom" + str(i)
             i = i + 1
-            # if (z == "") or (z in str(py_root)):
-            if True:
-                sentence = problem.AnnotatedFormula(
-                    logic="fof", name=name, role=problem.FormulaRole.AXIOM,
-                    formula=py_root, annotation=next_annotation)
-                sentence_enum.append(sentence)
+            sentence = problem.AnnotatedFormula(
+                logic="fof", name=name, role=problem.FormulaRole.AXIOM,
+                formula=py_root, annotation=next_annotation)
+            sentence_enum.append(sentence)
         inferences_enum = []
-        is_consistent = True
         i = 0
 
         if not simple_mode:
             print("Inferences:")
-            for inf in app.getInferences(IRI):
+            for inf in app.getInferences(ontology):
                 i += 1
                 inferences_enum.append(problem.AnnotatedFormula(
                     logic="fof", name="inference" + str(i), role=problem.FormulaRole.CONJECTURE,
                     formula=OWLParser.parseJavaToPython(node=inf.getFirst()), annotation=inf.getSecond()
                 ))
-
-            is_consistent = app.isConsistent()
 
         finalProblem = problem.Problem(sentence_enum, inferences_enum)
 
