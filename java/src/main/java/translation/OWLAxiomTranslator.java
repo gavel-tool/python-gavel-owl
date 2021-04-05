@@ -354,13 +354,13 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
         OWLDataFactory df = OWLManager.getOWLDataFactory();
         ArrayList<LogicElement> res = new ArrayList<>();
 
-        List<OWLIndividual> indivduals = axiom.getIndividualsAsList();
-        Constant referenceIndividual = indivduals.get(0).accept(new OWLIndividualTranslator());
-        for (int i = 1; i < indivduals.size(); i++) {
+        List<OWLIndividual> individuals = axiom.getIndividualsAsList();
+        Constant referenceIndividual = individuals.get(0).accept(new OWLIndividualTranslator());
+        for (int i = 1; i < individuals.size(); i++) {
             res.add(new BinaryFormula(
                 referenceIndividual,
                 new BinaryConnective(8), // equality
-                indivduals.get(i).accept(new OWLIndividualTranslator())
+                individuals.get(i).accept(new OWLIndividualTranslator())
             ));
         }
         for (OWLIndividual individual : axiom.getIndividualsAsList()) {
@@ -605,11 +605,11 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
         ArrayList<LogicElement> res = new ArrayList<>();
         res.add(axiom.getProperty().accept(new OWLPropertyExpressionTranslator(
             axiom.getSubject().accept(new OWLIndividualTranslator()),
-            axiom.getObject().accept(new OWLDataTranslator()))));
+            axiom.getObject().accept(new OWLLiteralTranslator()))));
         res.add(df.getOWLThing().accept(
             new OWLClassExpressionTranslator(axiom.getSubject().accept(new OWLIndividualTranslator()))));
         res.add(df.getTopDatatype().accept(
-            new OWLDataTranslator((Constant) axiom.getObject().accept(new OWLDataTranslator()))));
+            new OWLDataTranslator(axiom.getObject().accept(new OWLLiteralTranslator()))));
         return res;
     }
 
@@ -622,11 +622,11 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
             new UnaryConnective(0), // negation
             axiom.getProperty().accept(new OWLPropertyExpressionTranslator(
                 axiom.getSubject().accept(new OWLIndividualTranslator()),
-                axiom.getObject().accept(new OWLDataTranslator())))));
+                axiom.getObject().accept(new OWLLiteralTranslator())))));
         res.add(df.getOWLThing().accept(
             new OWLClassExpressionTranslator(axiom.getSubject().accept(new OWLIndividualTranslator()))));
         res.add(df.getTopDatatype().accept(
-            new OWLDataTranslator((Constant) axiom.getObject().accept(new OWLDataTranslator()))));
+            new OWLDataTranslator(axiom.getObject().accept(new OWLLiteralTranslator()))));
         return res;
     }
 

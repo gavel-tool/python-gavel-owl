@@ -1,6 +1,5 @@
 package testAxiomTranslator;
 
-import fol.Symbol;
 import fol.UnaryConnective;
 import fol.UnaryFormula;
 import org.junit.jupiter.params.provider.Arguments;
@@ -9,10 +8,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLiteral;
-import translation.OWLClassExpressionTranslator;
-import translation.OWLDataTranslator;
-import translation.OWLIndividualTranslator;
-import translation.OWLPropertyExpressionTranslator;
+import translation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,10 +31,10 @@ public class TestNegativeDataPropertyAssertionAxiom extends StandardAxiomTest {
                         prop0.accept(
                             new OWLPropertyExpressionTranslator(
                                 ind.accept(new OWLIndividualTranslator()),
-                                lit.accept(new OWLDataTranslator())))
+                                lit.accept(new OWLLiteralTranslator())))
                     ),
                     df.getOWLThing().accept(new OWLClassExpressionTranslator(ind.accept(new OWLIndividualTranslator()))),
-                    df.getTopDatatype().accept(new OWLDataTranslator((Symbol) lit.accept(new OWLDataTranslator())))
+                    df.getTopDatatype().accept(new OWLDataTranslator(lit.accept(new OWLLiteralTranslator())))
                 ))
             )
         );

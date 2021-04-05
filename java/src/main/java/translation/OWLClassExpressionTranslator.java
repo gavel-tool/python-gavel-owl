@@ -225,10 +225,10 @@ public class OWLClassExpressionTranslator extends OWLTranslator implements OWLCl
         OWLDataFactory df = OWLManager.getOWLDataFactory();
         return new BinaryFormula(
             ce.getProperty().accept(
-                new OWLPropertyExpressionTranslator(p, ce.getFiller().accept(new OWLDataTranslator()))),
+                new OWLPropertyExpressionTranslator(p, ce.getFiller().accept(new OWLLiteralTranslator()))),
             new BinaryConnective(0),
             df.getTopDatatype().accept(
-                new OWLDataTranslator((Constant) ce.getFiller().accept(new OWLDataTranslator()))));
+                new OWLDataTranslator((Constant) ce.getFiller().accept(new OWLLiteralTranslator()))));
     }
 
     // Data Min Cardinality

@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import testAxiomTranslator.TestHasKey;
 
 @RunWith(JUnitPlatform.class)
-@SelectPackages({"testAxiomTranslator", "testClassExpressionTranslator"})
+@SelectPackages({"testAxiomTranslator", "testClassExpressionTranslator", "testDataTranslator"})
 @SelectClasses({TestHasKey.class})
 public class AxiomTestSuite {
 }
