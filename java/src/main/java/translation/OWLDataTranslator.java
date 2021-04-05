@@ -1,11 +1,8 @@
 package translation;
 
-import fol.LogicElement;
-import fol.PredicateExpression;
-import fol.Symbol;
-import org.semanticweb.owlapi.model.OWLDataIntersectionOf;
-import org.semanticweb.owlapi.model.OWLDataVisitorEx;
-import org.semanticweb.owlapi.model.OWLDatatype;
+import fol.*;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.*;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Stream;
@@ -28,7 +25,39 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
     public LogicElement visit(OWLDataIntersectionOf node) {
         Stream<OWLDatatype> conj = node.datatypesInSignature();
         Stream<LogicElement> stream = conj.map(x -> x.accept(new OWLDataTranslator(p)));
-
         return interlinkBinaryFormulas(0, stream); // 0 = conjunction
+    }
+
+    @Override
+    public LogicElement visit(OWLDataUnionOf node) {
+        Stream<OWLDatatype> disj = node.datatypesInSignature();
+        Stream<LogicElement> stream = disj.map(x -> x.accept(new OWLDataTranslator(p)));
+        return interlinkBinaryFormulas(1, stream); // 1 = disjunction
+    }
+
+    @Override
+    public LogicElement visit(OWLDataComplementOf node) {
+        OWLDataFactory df = OWLManager.getOWLDataFactory();
+        return new BinaryFormula(
+            new UnaryFormula(new UnaryConnective(0), node.getDataRange().accept(new OWLDataTranslator(p))),
+            new BinaryConnective(0), // 0 = conjunction
+            df.getTopDatatype().accept(new OWLDataTranslator(p))
+        );
+    }
+
+    @Override
+    public LogicElement visit(OWLDataOneOf node) {
+        OWLDataFactory df = OWLManager.getOWLDataFactory();
+        Stream<LogicElement> literals = node.values().map(l ->
+            new BinaryFormula(
+                new BinaryFormula(
+                    p,
+                    new BinaryConnective(8), // 8 = eq
+                    l.accept(new OWLLiteralTranslator())
+                ),
+                new BinaryConnective(0), // 0 = conjunction
+                df.getTopDatatype().accept(new OWLDataTranslator(l.accept(new OWLLiteralTranslator())))
+            ));
+        return interlinkBinaryFormulas(1, literals);
     }
 }

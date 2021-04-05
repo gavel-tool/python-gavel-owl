@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLDataRange;
 import translation.OWLDataTranslator;
 import translation.OWLTranslator;
 
@@ -29,7 +29,7 @@ public abstract class StandardDataTest {
 
     @ParameterizedTest
     @MethodSource("provideTestCases") //pairs of OWL-expression and FOL-expression
-    public void testTranslation(OWLDatatype owl, Object expected) {
+    public void testTranslation(OWLDataRange owl, Object expected) {
         LogicElement translated = owl.accept(new OWLDataTranslator(z));
         assertEquals(
             expected.toString().replace("∀", "\\forall").replace("∃", "\\exists"),
