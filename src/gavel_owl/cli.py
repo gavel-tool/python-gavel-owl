@@ -16,16 +16,12 @@ Why does this file exist, and why not put this in __main__?
 """
 __all__ = ["owl"]
 
-import os
 import subprocess
 import gavel.dialects.base.dialect as dialect
 import gavel.logic.problem as problem
 import gavel.prover as prover
-from gavel.dialects.tptp.parser import TPTPParser
 import click
-from py4j.java_gateway import JavaGateway
-from gavel.prover.vampire.interface import VampireInterface
-
+from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 
 @click.group()
 def owl():
@@ -33,43 +29,52 @@ def owl():
 
 
 @click.command()
-@click.option("-p", default="0815", help="Port number")
-def start_server(p):
-    """Start a server listening to port `p`"""
-    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-15.jar'], stdout=subprocess.PIPE,
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def start_server(jp, pp):
+    """Start a server listening to ports `jp` and `pp`"""
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-17.jar', jp, pp], stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
-        print(line)
         if "Server started" in str(line):
+            print(line)
             return 0
 
 
 @click.command()
-def stop_server():
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def stop_server(pp, jp):
     """Stop a running server"""
-    gateway = JavaGateway()
+    gateway = JavaGateway(gateway_parameters= GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
     gateway.shutdown()
-    print("stop_server done")
+    print("Server stopped")
 
 
 @click.command()
-@click.argument("f")  # file
-@click.argument("c")  # conjectures
+@click.argument("file")  # OWL ontology file
+@click.argument("conjectures")  # TPTP conjecture file
 @click.option("--steps", is_flag=True, default=False)
-def owl_prove(f, c, steps):
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def owl_prove(file, conjectures, steps, pp, jp):
+    """prove TPTP conjectures using OWL premises"""
+    #load and translate files
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
-    with open(f, "r") as finp:
-        owlProblem = owlParser.parse(finp.read())
-    with open(c, "r") as finp:
+    with open(file, "r") as finp:
+        owl_translation = owlParser.parse(finp.read(), jp=jp, pp=pp)
+    with open(conjectures, "r") as finp:
         tptpProblem = tptpParser.parse(finp.read())
-    sentence_enum = owlProblem.premises
-    conjecture_enum = owlProblem.conjectures + tptpProblem.conjectures
+    sentence_enum = owl_translation.premises
+    conjecture_enum = owl_translation.conjectures + tptpProblem.conjectures
     for x in sentence_enum:
         print(x)
     print("")
-    print("Conjecture:")
+    #prove using the vampire prover
+    print("Conjectures:")
     VampProver = prover.registry.get_prover("vampire")()
     for x in conjecture_enum:
         print(x)
@@ -83,13 +88,16 @@ def owl_prove(f, c, steps):
                 print(step)
 
 @click.command()
-@click.argument("o") # ontology
-def check_consistency(o):
+@click.argument("ontology") # ontology
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def check_consistency(ontology, jp, pp):
     """Check if an ontology is consistent"""
 
-    with open(o, "r") as finp:
+    with open(ontology, "r") as finp:
         ontology = finp.read()
-    gateway = JavaGateway()
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
     # create entry point
     app = gateway.entry_point
 
@@ -98,7 +106,57 @@ def check_consistency(o):
     else:
         print("Ontology is inconsistent")
 
+@click.command()
+@click.argument("ontology") # ontology
+@click.option("--steps", is_flag=True, default=False)
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+def compare_consistency(ontology, steps, jp, pp):
+    """Translate an ontology an compare the consistency of original and translation"""
+    with open(ontology, "r") as finp:
+        ontology = finp.read()
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
+    # create entry point
+    app = gateway.entry_point
+    owl_consistency = app.isConsistent(ontology)
+    owlParser = dialect.get_dialect("owl")()
+    owl_translation = owlParser.parse(ontology, jp=25335, pp=25336)
+    VampProver = prover.registry.get_prover("vampire")()
+    fol_proof = VampProver.prove(problem=owl_translation)
+
+    print(f'Consistency according to OWL reasoner: {owl_consistency}')
+    print(f'Result according to FOL reasoner: {fol_proof.status._name}: {fol_proof.status._description}')
+    if steps:
+        print("")
+        print("Proof:")
+        #for step in list(fol_proof.steps):
+         #   print(step)
+
+
+@click.command(name='translatep', context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
+@click.argument("frm")
+@click.argument("to")
+@click.argument("path")
+@click.pass_context
+def translateP(ctx, frm, to, path):
+    data = {ctx.args[i].strip('-'): ctx.args[i+1] for i in range(0, len(ctx.args), 2)}
+    input_dialect = dialect.get_dialect(frm)
+    output_dialect = dialect.get_dialect(to)
+
+    parser = input_dialect._parser_cls()
+    compiler = output_dialect._compiler_cls()
+    with open(path, "r") as finp:
+        print(compiler.visit(parser.parse(finp.read(), **data)))
+
+
+
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
+owl.add_command(translateP)
+owl.add_command(compare_consistency)
