@@ -13,18 +13,18 @@ public class TestObjectMinCardinality extends StandardClassExpressionTest {
 
     private static Stream<Arguments> provideTestCases() {
         OWLDataFactory df = OWLManager.getOWLDataFactory();
-        OWLClass testClass0 = df.getOWLClass("Class0");
-        OWLObjectPropertyExpression testProperty0 = df.getOWLObjectProperty("Prop0");
+        OWLClass testClass0 = df.getOWLClass("class0");
+        OWLObjectPropertyExpression testProperty0 = df.getOWLObjectProperty("prop0");
         LogicElement[] variables = {z};
 
         return Stream.of(
-                //test MinCardinality
-                Arguments.of(
-                        df.getOWLObjectMinCardinality(3, testProperty0, testClass0),
-                        "\\exists[X0, X1, X2]: ((X0 != X1) & ((X0 != X2) & ((X1 != X2) & (prop0(Z, X0) & (class0(X0)" +
-                                " & (prop0(Z, X1) & (class0(X1) & (prop0(Z, X2) & class0(X2)))))))))"
-                ),
-                Arguments.of(
+            //test MinCardinality
+            Arguments.of(
+                df.getOWLObjectMinCardinality(3, testProperty0, testClass0),
+                "\\exists[X0, X1, X2]: ((X0 != X1) & ((X0 != X2) & ((X1 != X2) & (prop0(Z, X0) & (class0(X0)" +
+                    " & (prop0(Z, X1) & (class0(X1) & (prop0(Z, X2) & class0(X2)))))))))"
+            ),
+            Arguments.of(
                         df.getOWLObjectMinCardinality(2, testProperty0, testClass0),
                         "\\exists[X0, X1]: ((X0 != X1) & (prop0(Z, X0) & (class0(X0) & (prop0(Z, X1) & class0(X1)))))"
                 )

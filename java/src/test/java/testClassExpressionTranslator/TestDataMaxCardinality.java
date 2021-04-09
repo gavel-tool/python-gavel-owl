@@ -12,8 +12,8 @@ public class TestDataMaxCardinality extends StandardClassExpressionTest {
 
     private static Stream<Arguments> provideTestCases() {
         OWLDataFactory df = OWLManager.getOWLDataFactory();
-        OWLDataRange range = df.getOWLDatatype("Data");
-        OWLDataPropertyExpression testProperty0 = df.getOWLDataProperty("Prop0");
+        OWLDataRange range = df.getOWLDatatype("data");
+        OWLDataPropertyExpression testProperty0 = df.getOWLDataProperty("prop0");
 
         return Stream.of(
             //test MaxCardinality

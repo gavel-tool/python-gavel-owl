@@ -13,16 +13,16 @@ public class TestObjectMaxCardinality extends StandardClassExpressionTest {
 
     private static Stream<Arguments> provideTestCases() {
         OWLDataFactory df = OWLManager.getOWLDataFactory();
-        OWLClass testClass0 = df.getOWLClass("Class0");
-        OWLObjectPropertyExpression testProperty0 = df.getOWLObjectProperty("Prop0");
+        OWLClass testClass0 = df.getOWLClass("class0");
+        OWLObjectPropertyExpression testProperty0 = df.getOWLObjectProperty("prop0");
         LogicElement[] variables = {z};
 
         return Stream.of(
-                //test MaxCardinality
-                Arguments.of(
-                        df.getOWLObjectMaxCardinality(1, testProperty0, testClass0),
-                        "\\forall[X0, X1]: ((prop0(Z, X0) & (class0(X0) & (prop0(Z, X1) & class0(X1)))) => ~(X0 != X1))"
-                )
+            //test MaxCardinality
+            Arguments.of(
+                df.getOWLObjectMaxCardinality(1, testProperty0, testClass0),
+                "\\forall[X0, X1]: ((prop0(Z, X0) & (class0(X0) & (prop0(Z, X1) & class0(X1)))) => ~(X0 != X1))"
+            )
 
         );
     }

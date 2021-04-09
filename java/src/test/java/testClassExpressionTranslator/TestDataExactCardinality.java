@@ -12,8 +12,8 @@ public class TestDataExactCardinality extends StandardClassExpressionTest {
 
     private static Stream<Arguments> provideTestCases() {
         OWLDataFactory df = OWLManager.getOWLDataFactory();
-        OWLDataRange range = df.getOWLDatatype("Class0");
-        OWLDataPropertyExpression testProperty0 = df.getOWLDataProperty("Prop0");
+        OWLDataRange range = df.getOWLDatatype("class0");
+        OWLDataPropertyExpression testProperty0 = df.getOWLDataProperty("prop0");
 
         return Stream.of(
             //test Exact Cardinality
