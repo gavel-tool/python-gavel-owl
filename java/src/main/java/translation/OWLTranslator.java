@@ -42,23 +42,29 @@ public abstract class OWLTranslator {
 
     public String getEntityName(OWLEntity entity) {
         String s = entity.toStringID();
+        /*
+        //shorten names
         if (!ApiServer.USE_FULL_IRI) {
             s = s.substring(s.lastIndexOf("/") + 1);
         }
         s = s.startsWith("http://") ? s.substring(7) : s;
         s = s.startsWith("www.") ? s.substring(4) : s;
+        // make names TPTP-conformal
         s = s.replaceAll("[^a-zA-Z0-9]", "_");
+        */
         return s;
     }
 
     public String getEntityName(OWLAnonymousIndividual individual) {
         String s = individual.toStringID();
+        /*
         if (!ApiServer.USE_FULL_IRI) {
             s = s.substring(s.lastIndexOf("/") + 1);
         }
         s = s.startsWith("http://") ? s.substring(7) : s;
         s = s.startsWith("www.") ? s.substring(4) : s;
         s = s.replaceAll("[^a-zA-Z0-9]", "_");
+         */
         return s;
     }
 

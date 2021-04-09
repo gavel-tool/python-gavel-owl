@@ -10,8 +10,8 @@ public class PredicateExpression extends LogicElement {
 
     public PredicateExpression(String predicate, LogicElement[] arguments) {
         super();
-        this.predicate = predicate.substring(0, 1).
-            replaceAll("[^A-z]", "p" + predicate.charAt(0)).toLowerCase() + predicate.substring(1);
+        this.predicate = predicate;//.substring(0, 1).
+        //replaceAll("[^A-z]", "p" + predicate.charAt(0)).toLowerCase() + predicate.substring(1);
         this.arguments = arguments;
     }
 

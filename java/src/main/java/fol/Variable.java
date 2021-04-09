@@ -11,7 +11,7 @@ public class Variable extends Symbol {
 
     public Variable(String symbol) {
         super();
-        this.symbol = symbol.substring(0, 1).replace("[^A-z]", "X").toUpperCase() + symbol.substring(1);
+        this.symbol = symbol; //.substring(0, 1).replace("[^A-z]", "X").toUpperCase() + symbol.substring(1);
     }
 
     @Override
