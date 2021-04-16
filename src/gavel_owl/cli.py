@@ -23,6 +23,7 @@ import gavel.prover as prover
 import click
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 
+
 @click.group()
 def owl():
     pass
@@ -33,12 +34,15 @@ def owl():
 @click.option("-pp", default="25334", help="Python Port number")
 def start_server(jp, pp):
     """Start a server listening to ports `jp` and `pp`"""
-    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'fowl-17.jar', jp, pp], stdout=subprocess.PIPE,
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'java/target/java-1.0-SNAPSHOT.one-jar.jar', jp, pp], stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
+        if "JarClassLoader: Warning:" not in str(line):
+            print(line.replace("\n", ""))
         if "Server started" in str(line):
-            print(line)
+            return 0
+        if "Starting server failed" in str(line):
             return 0
 
 
@@ -47,7 +51,7 @@ def start_server(jp, pp):
 @click.option("-pp", default="25334", help="Python Port number")
 def stop_server(pp, jp):
     """Stop a running server"""
-    gateway = JavaGateway(gateway_parameters= GatewayParameters(port=int(jp)),
+    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                           callback_server_parameters=CallbackServerParameters(port=int(pp)))
     gateway.shutdown()
     print("Server stopped")
@@ -61,7 +65,7 @@ def stop_server(pp, jp):
 @click.option("-pp", default="25334", help="Python Port number")
 def owl_prove(file, conjectures, steps, pp, jp):
     """prove TPTP conjectures using OWL premises"""
-    #load and translate files
+    # load and translate files
     owlParser = dialect.get_dialect("owl")()
     tptpParser = dialect.get_dialect("tptp")()
     with open(file, "r") as finp:
@@ -73,7 +77,7 @@ def owl_prove(file, conjectures, steps, pp, jp):
     for x in sentence_enum:
         print(x)
     print("")
-    #prove using the vampire prover
+    # prove using the vampire prover
     print("Conjectures:")
     VampProver = prover.registry.get_prover("vampire")()
     for x in conjecture_enum:
@@ -87,8 +91,9 @@ def owl_prove(file, conjectures, steps, pp, jp):
             for step in list(fol_proof.steps):
                 print(step)
 
+
 @click.command()
-@click.argument("ontology") # ontology
+@click.argument("ontology")  # ontology
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def check_consistency(ontology, jp, pp):
@@ -106,8 +111,9 @@ def check_consistency(ontology, jp, pp):
     else:
         print("Ontology is inconsistent")
 
+
 @click.command()
-@click.argument("ontology") # ontology
+@click.argument("ontology")  # ontology
 @click.option("--steps", is_flag=True, default=False)
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
@@ -130,8 +136,8 @@ def compare_consistency(ontology, steps, jp, pp):
     if steps:
         print("")
         print("Proof:")
-        #for step in list(fol_proof.steps):
-         #   print(step)
+        # for step in list(fol_proof.steps):
+        #   print(step)
 
 
 @click.command(name='translatep', context_settings=dict(
@@ -143,7 +149,7 @@ def compare_consistency(ontology, steps, jp, pp):
 @click.argument("path")
 @click.pass_context
 def translateP(ctx, frm, to, path):
-    data = {ctx.args[i].strip('-'): ctx.args[i+1] for i in range(0, len(ctx.args), 2)}
+    data = {ctx.args[i].strip('-'): ctx.args[i + 1] for i in range(0, len(ctx.args), 2)}
     input_dialect = dialect.get_dialect(frm)
     output_dialect = dialect.get_dialect(to)
 
@@ -151,7 +157,6 @@ def translateP(ctx, frm, to, path):
     compiler = output_dialect._compiler_cls()
     with open(path, "r") as finp:
         print(compiler.visit(parser.parse(finp.read(), **data)))
-
 
 
 owl.add_command(start_server)

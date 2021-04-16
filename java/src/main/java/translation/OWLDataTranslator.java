@@ -60,4 +60,5 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
             ));
         return interlinkBinaryFormulas(1, literals);
     }
+
 }

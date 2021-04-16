@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.ShortFormFromRDFSLabelAxiomListProvider;
 import py4j.GatewayServer;
+import py4j.Py4JNetworkException;
 
 import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
@@ -26,7 +27,14 @@ public class ApiServer {
 
     public static void main(String[] args) throws Exception {
         //arg0 is the java port, arg1 the python port
-        ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+        try {
+            ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+        } catch (Py4JNetworkException e) {
+            e.printStackTrace();
+            System.out.println("Starting server failed: " + e);
+
+        }
+
 
         /*
         Scanner scn = new Scanner(new File("src/main/resources/pizzaFile.owl"));
@@ -107,7 +115,7 @@ public class ApiServer {
                             new BinaryConnective(3), // implication
                             superClass
                         )),
-                    "inferred: " + sub.toString() + " SubClassOf " + c.toString())));
+                    "inferred: " + sub + " SubClassOf " + c)));
                 return res.toArray(new AnnotatedLogicElement[0]);
             }
         } catch (InconsistentOntologyException e) {
