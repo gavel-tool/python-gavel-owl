@@ -443,10 +443,10 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
         Variable[] z = new Variable[objPropertyCount];
         Variable[] w = new Variable[dataPropertyCount];
         for (int i = 0; i < z.length; i++) {
-            z[i] = new Variable("z" + (i + 1));
+            z[i] = new Variable("Z" + (i + 1));
         }
         for (int i = 0; i < w.length; i++) {
-            w[i] = new Variable("w" + (i + 1));
+            w[i] = new Variable("W" + (i + 1));
         }
         ArrayList<OWLObjectPropertyExpression> objectPropertyExpressions =
             axiom.objectPropertyExpressions().collect(Collectors.toCollection(ArrayList::new));
@@ -708,6 +708,22 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
             ));
         }
 
+        return res;
+    }
+
+    @Override
+    public ArrayList<LogicElement> visit(OWLDatatypeDefinitionAxiom axiom) {
+        Variable var1 = getUniqueVariable();
+        ArrayList<LogicElement> res = new ArrayList<>();
+        res.add(new QuantifiedFormula(
+            new Quantifier(0),
+            new Variable[]{var1},
+            new BinaryFormula(
+                axiom.getDatatype().accept(new OWLDataTranslator(var1)),
+                new BinaryConnective(2), // 2 = Biimplication
+                axiom.getDataRange().accept(new OWLDataTranslator(var1))
+            )
+        ));
         return res;
     }
 }
