@@ -60,7 +60,7 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
     @Override
     public LogicElement visit(OWLFacetRestriction node) {
         return new PredicateExpression(
-            node.getFacet().toString(),
+            node.getFacet().getIRI().toString(),
             new LogicElement[]{p, node.getFacetValue().accept(new OWLLiteralTranslator())});
     }
 
