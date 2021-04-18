@@ -68,4 +68,12 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
             new LogicElement[]{p, node.getFacetValue().accept(new OWLLiteralTranslator())});
     }
 
+    @Override
+    public LogicElement visit(OWLDatatypeRestriction node) {
+        return new BinaryFormula(
+            node.getDatatype().accept(new OWLDataTranslator(p)),
+            new BinaryConnective(0), // 0 = conjunction
+            interlinkBinaryFormulas(0, node.facetRestrictions().map(x -> x.accept(new OWLDataTranslator(p))))
+        );
+    }
 }
