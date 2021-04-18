@@ -50,13 +50,9 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
         OWLDataFactory df = OWLManager.getOWLDataFactory();
         Stream<LogicElement> literals = node.values().map(l ->
             new BinaryFormula(
-                new BinaryFormula(
-                    p,
-                    new BinaryConnective(8), // 8 = eq
-                    l.accept(new OWLLiteralTranslator())
-                ),
-                new BinaryConnective(0), // 0 = conjunction
-                df.getTopDatatype().accept(new OWLDataTranslator(l.accept(new OWLLiteralTranslator())))
+                p,
+                new BinaryConnective(8), // 8 = eq
+                l.accept(new OWLLiteralTranslator())
             ));
         return interlinkBinaryFormulas(1, literals);
     }

@@ -55,14 +55,10 @@ public class OWLClassExpressionTranslator extends OWLTranslator implements OWLCl
         OWLDataFactory df = OWLManager.getOWLDataFactory();
         Stream<LogicElement> stream = oneOf.individuals().map(x ->
             new BinaryFormula(
-                new BinaryFormula(
-                    p,
-                    new BinaryConnective(8), // 8 = EQ
-                    x.accept(new OWLIndividualTranslator())),
-                new BinaryConnective(0),
-                df.getOWLThing().accept(new OWLClassExpressionTranslator(x.accept(new OWLIndividualTranslator())))
-            )
-        );
+                p,
+                new BinaryConnective(8), // 8 = EQ
+                x.accept(new OWLIndividualTranslator())
+            ));
         return interlinkBinaryFormulas(1, stream); // 1 = disjunction
     }
 
@@ -228,7 +224,7 @@ public class OWLClassExpressionTranslator extends OWLTranslator implements OWLCl
                 new OWLPropertyExpressionTranslator(p, ce.getFiller().accept(new OWLLiteralTranslator()))),
             new BinaryConnective(0),
             df.getTopDatatype().accept(
-                new OWLDataTranslator((Constant) ce.getFiller().accept(new OWLLiteralTranslator()))));
+                new OWLDataTranslator(ce.getFiller().accept(new OWLLiteralTranslator()))));
     }
 
     // Data Min Cardinality
