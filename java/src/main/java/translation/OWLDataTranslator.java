@@ -61,4 +61,11 @@ public class OWLDataTranslator extends OWLTranslator implements OWLDataVisitorEx
         return interlinkBinaryFormulas(1, literals);
     }
 
+    @Override
+    public LogicElement visit(OWLFacetRestriction node) {
+        return new PredicateExpression(
+            node.getFacet().toString(),
+            new LogicElement[]{p, node.getFacetValue().accept(new OWLLiteralTranslator())});
+    }
+
 }
