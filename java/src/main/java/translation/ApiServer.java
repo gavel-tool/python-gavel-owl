@@ -13,11 +13,13 @@ import py4j.GatewayServer;
 import py4j.Py4JNetworkException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -29,22 +31,23 @@ public class ApiServer {
         //arg0 is the java port, arg1 the python port
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+
+            Scanner scn = new Scanner(new File("src/main/resources/dog-example.omn"));
+            StringBuilder ontologyText = new StringBuilder();
+            while (scn.hasNext()) {
+                ontologyText.append(scn.nextLine()).append("\n");
+            }
+            AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
+            for (AnnotatedLogicElement t : translation) {
+                System.out.println(t);
+            }
+            System.out.println(app.getNameMapping(ontologyText.toString()));
+
         } catch (Py4JNetworkException e) {
             e.printStackTrace();
             System.out.println("Starting server failed: " + e);
 
         }
-
-
-        /*
-        Scanner scn = new Scanner(new File("src/main/resources/pizzaFile.owl"));
-        StringBuilder ontologyText = new StringBuilder();
-        while (scn.hasNext()) {
-            ontologyText.append(scn.nextLine()).append("\n");
-        }
-        System.out.println(Arrays.toString(app.translateOntology(ontologyText.toString())));
-        System.out.println(app.getNameMapping(ontologyText.toString()));
-        */
 
     }
 

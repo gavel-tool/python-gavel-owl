@@ -2,11 +2,9 @@ package translation;
 
 import fol.*;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -43,7 +41,8 @@ public class OntologyTranslator {
             Set<OWLEntity> signature = axiom.signature().collect(Collectors.toSet());
             if (signature.stream().anyMatch(e -> e.equals(df.getOWLNothing()))) nothing = true;
             if (signature.stream().anyMatch(e -> e.equals(df.getOWLTopObjectProperty()))) topObjectProperty = true;
-            if (signature.stream().anyMatch(e -> e.equals(df.getOWLBottomObjectProperty()))) bottomObjectProperty = true;
+            if (signature.stream().anyMatch(e -> e.equals(df.getOWLBottomObjectProperty())))
+                bottomObjectProperty = true;
             if (signature.stream().anyMatch(e -> e.equals(df.getOWLTopDataProperty()))) topDataProperty = true;
             if (signature.stream().anyMatch(e -> e.equals(df.getOWLBottomDataProperty()))) bottomDataProperty = true;
 
@@ -70,6 +69,7 @@ public class OntologyTranslator {
         ArrayList<AnnotatedLogicElement> result = new ArrayList<>();
         OWLDataFactory df = OWLManager.getOWLDataFactory();
         Variable x = new Variable("X");
+        Variable y = new Variable("Y");
         // domain consists of objects and data
         result.add(new AnnotatedLogicElement(new QuantifiedFormula(
             new Quantifier(0), // universal Quantifier
@@ -80,7 +80,7 @@ public class OntologyTranslator {
                 df.getTopDatatype().accept(new OWLDataTranslator(x))
             )
         ), "background axiom: domain consists of objects and data"));
-        // object domain and data domain are disjunct
+        // object domain and data domain are disjoint
         result.add(new AnnotatedLogicElement(new QuantifiedFormula(
             new Quantifier(0),
             new Variable[]{x},
@@ -92,7 +92,7 @@ public class OntologyTranslator {
                     df.getTopDatatype().accept(new OWLDataTranslator(x))
                 )
             )
-        ), "background axiom: object domain and data domain are disjunct"));
+        ), "background axiom: object domain and data domain are disjoint"));
         // there are things
         result.add(new AnnotatedLogicElement(new QuantifiedFormula(
             new Quantifier(1), // existential quantifier
@@ -105,6 +105,22 @@ public class OntologyTranslator {
             new Variable[]{x},
             df.getTopDatatype().accept(new OWLDataTranslator(x))
         ), "background axiom: there are literals"));
+
+        // facets
+        for (IRI facet : OWLFacet.getFacetIRIs())
+            result.add(new AnnotatedLogicElement(new QuantifiedFormula(
+                new Quantifier(0), // universal quantifier
+                new Variable[]{x, y},
+                new BinaryFormula(
+                    new PredicateExpression(facet.toString(), new Variable[]{x, y}),
+                    new BinaryConnective(3), // implication
+                    new BinaryFormula(
+                        df.getTopDatatype().accept(new OWLDataTranslator(x)),
+                        new BinaryConnective(0), // conjunction
+                        df.getTopDatatype().accept(new OWLDataTranslator(y))
+                    )
+                )
+            ), "facets can only be applied to literals"));
 
         return result;
     }

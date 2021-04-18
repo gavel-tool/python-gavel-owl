@@ -467,7 +467,7 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
         Variable[] allVars = new Variable[2 + dataPropertyCount + objPropertyCount];
         allVars[0] = var1;
         allVars[1] = var2;
-        if (objPropertyCount >= 0) System.arraycopy(z, 0, allVars, 2, objPropertyCount);
+        System.arraycopy(z, 0, allVars, 2, objPropertyCount);
         for (int i = 0; i < dataPropertyCount; i++) {
             allVars[i + 2 + objPropertyCount] = w[i];
         }
@@ -707,7 +707,6 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
                 )
             ));
         }
-
         return res;
     }
 
