@@ -11,44 +11,35 @@ class OWLParser(parser.StringBasedParser):
 
     @staticmethod
     def parseJavaToPython(node):
-        if node.getVisitName() == "quantifier":
-            return logic.Quantifier(node.getId())
-        elif node.getVisitName() == "binary_connective":
-            return logic.BinaryConnective(node.getId())
-        elif node.getVisitName() == "defined_predicate":
-            return logic.DefinedPredicate(node.getId())
-        elif node.getVisitName() == "unary_connective":
-            return logic.UnaryConnective(node.getId())
-        elif node.getVisitName() == "unary_formula":
-            return logic.UnaryFormula(OWLParser.parseJavaToPython(node.getConnective()),
-                                      OWLParser.parseJavaToPython(node.getFormula()))
-        elif node.getVisitName() == "quantified_formula":
-            variables = []
-            for var in node.getVariables():
-                variables.append(OWLParser.parseJavaToPython(var))
+        if node.getVisitName() == "quantified_formula":
             return logic.QuantifiedFormula(
-                OWLParser.parseJavaToPython(node.getQuantifier()), variables,
+                logic.Quantifier(node.getQuantifier().getId()),
+                [logic.Variable(var.getSymbol()) for var in node.getVariables()],
                 OWLParser.parseJavaToPython(node.getFormula()))
         elif node.getVisitName() == "binary_formula":
             return logic.BinaryFormula(
-                OWLParser.parseJavaToPython(node.getLeft()), OWLParser.parseJavaToPython(node.getOp()),
+                OWLParser.parseJavaToPython(node.getLeft()), logic.BinaryConnective(node.getOp().getId()),
                 OWLParser.parseJavaToPython(node.getRight()))
         elif node.getVisitName() == "predicate_expression":
-            arguments = []
-            for arg in node.getArguments():
-                arguments.append(OWLParser.parseJavaToPython(arg))
-            return logic.PredicateExpression(node.getPredicate(), arguments)
-        elif node.getVisitName() == "typed_variable":
-            return logic.TypedVariable(node.getName(), OWLParser.parseJavaToPython(node.getVType()))
+            return logic.PredicateExpression(node.getPredicate(),
+                                             [logic.Variable(arg.getSymbol()) if arg.getVisitName() == "variable"
+                                              else logic.Constant(arg.getSymbol()) for arg in node.getArguments()])
         elif node.getVisitName() == "variable":
             return logic.Variable(node.getSymbol())
         elif node.getVisitName() == "constant":
             return logic.Constant(node.getSymbol())
+        elif node.getVisitName() == "unary_formula":
+            return logic.UnaryFormula(logic.UnaryConnective(node.getConnective().getId()),
+                                      OWLParser.parseJavaToPython(node.getFormula()))
+        elif node.getVisitName() == "defined_predicate":
+            return logic.DefinedPredicate(node.getId())
+        elif node.getVisitName() == "typed_variable":
+            return logic.TypedVariable(node.getName(), OWLParser.parseJavaToPython(node.getVType()))
         elif node.getVisitName() == "defined_constant":
             return logic.DefinedConstant(node.getId())
         elif node.getVisitName() == "subtype":
-            return logic.Subtype(OWLParser.parseJavaToPython(node.getLeft),
-                                 OWLParser.parseJavaToPython(node.getRight))
+            return logic.Subtype(OWLParser.parseJavaToPython(node.getLeft()),
+                                 OWLParser.parseJavaToPython(node.getRight()))
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
