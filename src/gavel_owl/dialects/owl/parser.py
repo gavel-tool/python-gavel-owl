@@ -77,4 +77,5 @@ class OWLParser(parser.StringBasedParser):
 
         finalProblem = problem.Problem(sentence_enum, inferences_enum)
 
+        gateway.shutdown_callback_server()
         return finalProblem  # sentence_enum, inferences_enum, is_consistent
