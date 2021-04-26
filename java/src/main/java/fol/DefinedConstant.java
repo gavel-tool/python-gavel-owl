@@ -1,6 +1,6 @@
 package fol;
 
-class DefinedConstant extends LogicElement {
+public class DefinedConstant extends LogicElement {
 
     int id;
     String __visit_name__ = "defined_constant";

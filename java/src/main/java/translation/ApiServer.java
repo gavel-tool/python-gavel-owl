@@ -32,7 +32,7 @@ public class ApiServer {
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
 
-            Scanner scn = new Scanner(new File("src/main/resources/dog-example.omn"));
+            Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-master_2021Q1/fibo-master_2021Q1/AboutFIBOProd.rdf"));
             StringBuilder ontologyText = new StringBuilder();
             while (scn.hasNext()) {
                 ontologyText.append(scn.nextLine()).append("\n");

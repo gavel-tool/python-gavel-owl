@@ -110,7 +110,7 @@ public class OWLClassExpressionTranslator extends OWLTranslator implements OWLCl
     //Object Min Cardinality
     @Override
     public LogicElement visit(OWLObjectMinCardinality ce) {
-        if (ce.getCardinality() == 0) return null;
+        if (ce.getCardinality() == 0) return new DefinedConstant(0); // $true
 
         Variable[] vars = new Variable[ce.getCardinality()];
         for (int ind = 0; ind < ce.getCardinality(); ind++) {
