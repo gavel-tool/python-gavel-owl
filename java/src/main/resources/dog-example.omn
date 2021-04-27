@@ -8,6 +8,9 @@ Ontology: <http://example.com/owl/families> <http://example.com/owl/families-v1>
 ObjectProperty: has_part
 ObjectProperty: consists_of
 
+Datatype: DataEx
+    EquivalentTo: xsd:integer[>= 3]
+
 Class: Dog
 Class: a:Mammal
 Class: Dog
@@ -23,3 +26,5 @@ Class: Couple
 
 Class: Hand
     SubClassOf: owl:Nothing
+
+

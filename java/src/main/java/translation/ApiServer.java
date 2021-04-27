@@ -13,13 +13,11 @@ import py4j.GatewayServer;
 import py4j.Py4JNetworkException;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -32,7 +30,7 @@ public class ApiServer {
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
 
-            Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-master_2021Q1/fibo-master_2021Q1/AboutFIBOProd.rdf"));
+            /*Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-master_2021Q1/fibo-master_2021Q1/AboutFIBOProd.rdf"));
             StringBuilder ontologyText = new StringBuilder();
             while (scn.hasNext()) {
                 ontologyText.append(scn.nextLine()).append("\n");
@@ -41,7 +39,7 @@ public class ApiServer {
             for (AnnotatedLogicElement t : translation) {
                 System.out.println(t);
             }
-            System.out.println(app.getNameMapping(ontologyText.toString()));
+            System.out.println(app.getNameMapping(ontologyText.toString()));*/
 
         } catch (Py4JNetworkException e) {
             e.printStackTrace();

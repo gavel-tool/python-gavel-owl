@@ -21,6 +21,7 @@ import gavel.dialects.base.dialect as dialect
 import gavel.logic.problem as problem
 import gavel.prover as prover
 import click
+import time
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 
 
@@ -149,6 +150,7 @@ def compare_consistency(ontology, steps, jp, pp):
 @click.argument("path")
 @click.pass_context
 def translateP(ctx, frm, to, path):
+    #start = time.time()
     data = {ctx.args[i].strip('-'): ctx.args[i + 1] for i in range(0, len(ctx.args), 2)}
     input_dialect = dialect.get_dialect(frm)
     output_dialect = dialect.get_dialect(to)
@@ -157,7 +159,7 @@ def translateP(ctx, frm, to, path):
     compiler = output_dialect._compiler_cls()
     with open(path, "r") as finp:
         print(compiler.visit(parser.parse(finp.read(), **data)))
-
+    #print("Time: " + str(time.time()-start))
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
