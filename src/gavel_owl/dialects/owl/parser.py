@@ -1,8 +1,5 @@
-from typing import Iterable
-from gavel.dialects.base.parser import Parseable, Target
 import gavel.logic.problem as problem
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
-import subprocess
 import gavel.logic.logic as logic
 import gavel.dialects.base.parser as parser
 
@@ -36,7 +33,7 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "typed_variable":
             return logic.TypedVariable(node.getName(), OWLParser.parseJavaToPython(node.getVType()))
         elif node.getVisitName() == "defined_constant":
-            return logic.DefinedConstant(node.getId())
+            return logic.DefinedConstant(node.getSymbol())
         elif node.getVisitName() == "subtype":
             return logic.Subtype(OWLParser.parseJavaToPython(node.getLeft()),
                                  OWLParser.parseJavaToPython(node.getRight()))

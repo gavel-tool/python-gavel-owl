@@ -35,7 +35,7 @@ def owl():
 @click.option("-pp", default="25334", help="Python Port number")
 def start_server(jp, pp):
     """Start a server listening to ports `jp` and `pp`"""
-    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'java/target/java-1.0-SNAPSHOT.one-jar.jar', jp, pp], stdout=subprocess.PIPE,
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', 'java/target/java-1.0-SNAPSHOT.one-jar.jar', jp, pp], stdout=subprocess.PIPE,#
                          stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
