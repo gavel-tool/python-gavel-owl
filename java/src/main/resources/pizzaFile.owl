@@ -95,35 +95,6 @@ v1.4. Added Food class (used in domain/range of hasIngredient), Added several ha
     <!--
     ///////////////////////////////////////////////////////////////////////////////////////
     //
-    // Datatypes
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-
-
-
-    <!-- http://openenergy-platform.org/ontology/oeo/OEO_00140100 -->
-
-    <rdfs:Datatype rdf:about="http://openenergy-platform.org/ontology/oeo/OEO_00140100">
-        <rdfs:label xml:lang="en">restrictedType</rdfs:label>
-        <owl:equivalentClass>
-            <rdfs:Datatype>
-                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-                <owl:withRestrictions rdf:parseType="Collection">
-                    <rdf:Description>
-                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</xsd:minInclusive>
-                    </rdf:Description>
-                </owl:withRestrictions>
-            </rdfs:Datatype>
-        </owl:equivalentClass>
-    </rdfs:Datatype>
-
-
-
-    <!--
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
     // Object Properties
     //
     ///////////////////////////////////////////////////////////////////////////////////////

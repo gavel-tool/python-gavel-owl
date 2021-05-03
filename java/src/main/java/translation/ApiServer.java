@@ -3,6 +3,8 @@ package translation;
 import fol.*;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.metrics.AxiomCount;
+import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
@@ -13,11 +15,13 @@ import py4j.GatewayServer;
 import py4j.Py4JNetworkException;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -30,12 +34,14 @@ public class ApiServer {
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
 
-            /*Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-master_2021Q1/fibo-master_2021Q1/AboutFIBOProd.rdf"));
+            Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-merged.owl"));
             StringBuilder ontologyText = new StringBuilder();
             while (scn.hasNext()) {
                 ontologyText.append(scn.nextLine()).append("\n");
             }
-            AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
+            System.out.println(new AxiomCount(app.loadOntology(ontologyText.toString())).getValue() + " & "
+                + app.getDLComplexity(ontologyText.toString()) + " & \\\\");
+            /*AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
             for (AnnotatedLogicElement t : translation) {
                 System.out.println(t);
             }
@@ -123,5 +129,11 @@ public class ApiServer {
             System.out.println("Getting inferences failed because ontology is inconsistent.");
         }
         return null;
+    }
+
+    public String getDLComplexity(String ontologyText) throws Exception {
+        OWLOntology ontology = loadOntology(ontologyText);
+        DLExpressivity expressivity = new DLExpressivity(ontology);
+        return expressivity.getValue();
     }
 }
