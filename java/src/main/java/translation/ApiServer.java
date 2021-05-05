@@ -92,6 +92,13 @@ public class ApiServer {
         return translator.translate().toArray(new AnnotatedLogicElement[0]);
     }
 
+    public AnnotatedLogicElement[] translateOntologyFromFile(String path) throws Exception {
+        System.out.println("Starting Translation");
+        OntologyTranslator translator = new OntologyTranslator(
+            OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(new File(path)), false);
+        return translator.translate().toArray(new AnnotatedLogicElement[0]);
+    }
+
     public HashMap<String, String> getNameMapping(String ontologyText) throws Exception {
         OWLOntology ontology = loadOntology(ontologyText);
         ontology.signature(Imports.INCLUDED).forEach(HasIRI::getIRI);

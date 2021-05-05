@@ -44,6 +44,15 @@ class OWLParser(parser.StringBasedParser):
         jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
         pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
 
+        # translating chebi leads to the following error:
+        # RecursionError: maximum recursion depth exceeded while calling a Python object
+        # setting the recursion limit to a high enough value might help
+        # see https://careerkarma.com/blog/python-maximum-recursion-depth-exceeded-in-comparison/
+        import sys
+        #print(sys.getrecursionlimit())
+        #sys.setrecursionlimit(100000)
+        #print(sys.getrecursionlimit())
+
         gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                               callback_server_parameters=CallbackServerParameters(port=int(pp)))
         # create entry point
@@ -51,7 +60,7 @@ class OWLParser(parser.StringBasedParser):
 
         sentence_enum = []
         i = 0
-        for next_pair in app.translateOntology(ontology):
+        for next_pair in app.translateOntologyFromFile(ontology):
             next_annotation = next_pair.getSecond()
             py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
             name = "axiom" + str(i)

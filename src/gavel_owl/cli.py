@@ -161,6 +161,22 @@ def translateP(ctx, frm, to, path):
         print(compiler.visit(parser.parse(finp.read(), **data)))
     #print("Time: " + str(time.time()-start))
 
+
+@click.argument("frm")
+@click.argument("to")
+@click.argument("path")
+@click.pass_context
+def translatef(ctx, frm, to, path):
+    start = time.time()
+    data = {ctx.args[i].strip('-'): ctx.args[i + 1] for i in range(0, len(ctx.args), 2)}
+    input_dialect = dialect.get_dialect(frm)
+    output_dialect = dialect.get_dialect(to)
+
+    parser = input_dialect._parser_cls()
+    compiler = output_dialect._compiler_cls()
+    print(compiler.visit(parser.parse(path, **data)))
+    print("Time: " + str(time.time()-start))
+
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
