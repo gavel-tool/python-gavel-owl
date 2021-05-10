@@ -76,3 +76,4 @@ docs/_build
 #java
 java/target
 
+*.jar
