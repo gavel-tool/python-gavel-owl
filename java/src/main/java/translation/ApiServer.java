@@ -34,18 +34,21 @@ public class ApiServer {
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
 
-            Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-merged.owl"));
+            /*Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-merged.owl"));
             StringBuilder ontologyText = new StringBuilder();
             while (scn.hasNext()) {
                 ontologyText.append(scn.nextLine()).append("\n");
             }
             System.out.println(new AxiomCount(app.loadOntology(ontologyText.toString())).getValue() + " & "
-                + app.getDLComplexity(ontologyText.toString()) + " & \\\\");
-            /*AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
-            for (AnnotatedLogicElement t : translation) {
-                System.out.println(t);
-            }
-            System.out.println(app.getNameMapping(ontologyText.toString()));*/
+                + app.getDLComplexity(ontologyText.toString()) + " & \\\\");*/
+
+            //AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
+            //AnnotatedLogicElement[] translation = app.translateOntologyFromFile("../../../../Documents/example-ontologies/oeo-merged.owl");
+
+            //for (AnnotatedLogicElement t : translation) {
+            //    System.out.println(t);
+            //}
+            //System.out.println(app.getNameMapping(ontologyText.toString()));*/
 
         } catch (Py4JNetworkException e) {
             e.printStackTrace();

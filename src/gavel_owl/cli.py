@@ -67,24 +67,26 @@ def stop_server(pp, jp):
 def owl_prove(file, conjectures, steps, pp, jp):
     """prove TPTP conjectures using OWL premises"""
     # load and translate files
-    owlParser = dialect.get_dialect("owl")()
-    tptpParser = dialect.get_dialect("tptp")()
-    with open(file, "r") as finp:
-        owl_translation = owlParser.parse(finp.read(), jp=jp, pp=pp)
+    owl_dialect = dialect.get_dialect("owl")
+    tptp_dialect = dialect.get_dialect("tptp")
+    owl_parser = owl_dialect._parser_cls()
+    tptp_parser = tptp_dialect._parser_cls()
+    tptp_compiler = tptp_dialect._compiler_cls()
+
+    owl_problem = owl_parser.parse_from_file(file_path=file, jp=jp, pp=pp)
+
     with open(conjectures, "r") as finp:
-        tptpProblem = tptpParser.parse(finp.read())
-    sentence_enum = owl_translation.premises
-    conjecture_enum = owl_translation.conjectures + tptpProblem.conjectures
-    for x in sentence_enum:
-        print(x)
+        tptp_problem = tptp_parser.parse(finp.read())
+
+    print(tptp_compiler.visit(owl_problem))
     print("")
     # prove using the vampire prover
     print("Conjectures:")
     VampProver = prover.registry.get_prover("vampire")()
-    for x in conjecture_enum:
-        print(x)
-        owl_problem = problem.Problem(premises=sentence_enum, conjectures=[x])
-        fol_proof = VampProver.prove(problem=owl_problem)
+    for conj in tptp_problem.conjectures:
+        print(tptp_compiler.visit(conj))
+        combined_problem = problem.Problem(premises=owl_problem.premises, conjectures=[conj])
+        fol_proof = VampProver.prove(problem=combined_problem)
         print(fol_proof.status._name + ": " + fol_proof.status._description)
         if steps:
             print("")
@@ -113,73 +115,7 @@ def check_consistency(ontology, jp, pp):
         print("Ontology is inconsistent")
 
 
-@click.command()
-@click.argument("ontology")  # ontology
-@click.option("--steps", is_flag=True, default=False)
-@click.option("-jp", default="25333", help="Java Port number")
-@click.option("-pp", default="25334", help="Python Port number")
-def compare_consistency(ontology, steps, jp, pp):
-    """Translate an ontology an compare the consistency of original and translation"""
-    with open(ontology, "r") as finp:
-        ontology = finp.read()
-    gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
-                          callback_server_parameters=CallbackServerParameters(port=int(pp)))
-    # create entry point
-    app = gateway.entry_point
-    owl_consistency = app.isConsistent(ontology)
-    owlParser = dialect.get_dialect("owl")()
-    owl_translation = owlParser.parse(ontology, jp=25335, pp=25336)
-    VampProver = prover.registry.get_prover("vampire")()
-    fol_proof = VampProver.prove(problem=owl_translation)
-
-    print(f'Consistency according to OWL reasoner: {owl_consistency}')
-    print(f'Result according to FOL reasoner: {fol_proof.status._name}: {fol_proof.status._description}')
-    if steps:
-        print("")
-        print("Proof:")
-        # for step in list(fol_proof.steps):
-        #   print(step)
-
-
-@click.command(name='translatep', context_settings=dict(
-    ignore_unknown_options=True,
-    allow_extra_args=True,
-))
-@click.argument("frm")
-@click.argument("to")
-@click.argument("path")
-@click.pass_context
-def translateP(ctx, frm, to, path):
-    #start = time.time()
-    data = {ctx.args[i].strip('-'): ctx.args[i + 1] for i in range(0, len(ctx.args), 2)}
-    input_dialect = dialect.get_dialect(frm)
-    output_dialect = dialect.get_dialect(to)
-
-    parser = input_dialect._parser_cls()
-    compiler = output_dialect._compiler_cls()
-    with open(path, "r") as finp:
-        print(compiler.visit(parser.parse(finp.read(), **data)))
-    #print("Time: " + str(time.time()-start))
-
-
-@click.argument("frm")
-@click.argument("to")
-@click.argument("path")
-@click.pass_context
-def translatef(ctx, frm, to, path):
-    start = time.time()
-    data = {ctx.args[i].strip('-'): ctx.args[i + 1] for i in range(0, len(ctx.args), 2)}
-    input_dialect = dialect.get_dialect(frm)
-    output_dialect = dialect.get_dialect(to)
-
-    parser = input_dialect._parser_cls()
-    compiler = output_dialect._compiler_cls()
-    print(compiler.visit(parser.parse(path, **data)))
-    print("Time: " + str(time.time()-start))
-
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
-owl.add_command(translateP)
-owl.add_command(compare_consistency)

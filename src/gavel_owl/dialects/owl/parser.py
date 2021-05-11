@@ -1,3 +1,5 @@
+from typing import Iterable
+
 import gavel.logic.problem as problem
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 import gavel.logic.logic as logic
@@ -40,18 +42,10 @@ class OWLParser(parser.StringBasedParser):
         elif node.getVisitName() == "type":
             return logic.Type(node.getName())
 
-    def parse(self, ontology, z="", simple_mode=True, *args, **kwargs):
+
+    def parse_from_file(self, file_path, *args, **kwargs):
         jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
         pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
-
-        # translating chebi leads to the following error:
-        # RecursionError: maximum recursion depth exceeded while calling a Python object
-        # setting the recursion limit to a high enough value might help
-        # see https://careerkarma.com/blog/python-maximum-recursion-depth-exceeded-in-comparison/
-        import sys
-        #print(sys.getrecursionlimit())
-        #sys.setrecursionlimit(100000)
-        #print(sys.getrecursionlimit())
 
         gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                               callback_server_parameters=CallbackServerParameters(port=int(pp)))
@@ -60,7 +54,33 @@ class OWLParser(parser.StringBasedParser):
 
         sentence_enum = []
         i = 0
-        for next_pair in app.translateOntologyFromFile(ontology):
+        for next_pair in app.translateOntologyFromFile(file_path):
+            next_annotation = next_pair.getSecond()
+            py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
+            name = "axiom" + str(i)
+            i = i + 1
+            sentence = problem.AnnotatedFormula(
+                logic="fof", name=name, role=problem.FormulaRole.AXIOM,
+                formula=py_root, annotation=next_annotation)
+            sentence_enum.append(sentence)
+
+        gateway.shutdown_callback_server()
+
+        return problem.Problem(sentence_enum, [])
+
+
+    def parse(self, ontology, z="", simple_mode=True, *args, **kwargs):
+        jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
+        pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
+
+        gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
+                              callback_server_parameters=CallbackServerParameters(port=int(pp)))
+        # create entry point
+        app = gateway.entry_point
+
+        sentence_enum = []
+        i = 0
+        for next_pair in app.translateOntology(ontology):
             next_annotation = next_pair.getSecond()
             py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())
             name = "axiom" + str(i)
