@@ -114,6 +114,7 @@ def check_consistency(ontology, jp, pp):
     else:
         print("Ontology is inconsistent")
 
+    gateway.shutdown_callback_server()
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
