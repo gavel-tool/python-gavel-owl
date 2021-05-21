@@ -51,7 +51,7 @@ To set up `python-gavel-owl` for local development:
 
 3. Clone your fork locally::
 
-    git clone git@github.com:YOURGITHUBNAME/python-gavel-owl.git
+    git clone git@github.com:gavel-tool/python-gavel-owl.git
 
 4. Create a branch for local development::
 
