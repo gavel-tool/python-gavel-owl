@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 setup(
     name='gavel-owl',
-    version='0.0.0',
+    version='0.0.1',
     description='An extension for gavel introducing OWL translations.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
@@ -47,7 +47,6 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -70,10 +69,10 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
+    python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=[
         'click',
-        'gavel',
+        'gavel>=0.1.0',
         'py4j'
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
