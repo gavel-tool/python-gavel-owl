@@ -2,9 +2,7 @@ package translation;
 
 import fol.*;
 import org.semanticweb.HermiT.ReasonerFactory;
-import org.semanticweb.elk.util.collections.ArraySet;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -17,14 +15,12 @@ import py4j.Py4JNetworkException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
-
-import org.obolibrary.robot.*;
 
 import static java.lang.Integer.parseInt;
 
@@ -35,7 +31,7 @@ public class ApiServer {
         //arg0 is the java port, arg1 the python port
         try {
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
-            app.getRandomSubset("../../../../Documents/example-ontologies/oeo-merged.owl");
+
             /*Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-merged.owl"));
             StringBuilder ontologyText = new StringBuilder();
             while (scn.hasNext()) {
@@ -147,19 +143,5 @@ public class ApiServer {
         OWLOntology ontology = loadOntology(ontologyText);
         DLExpressivity expressivity = new DLExpressivity(ontology);
         return expressivity.getValue();
-    }
-
-    public void getRandomSubset(String path) throws IOException, OWLOntologyCreationException {
-        IOHelper ioHelper = new IOHelper();
-        OWLOntology full = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(new File(path));
-        List<OWLClass> list = new ArrayList<>(full.getClassesInSignature());
-        OWLClass randomClass = list.get((int) (Math.random()*list.size()));
-        Set<OWLObject> objects = new ArraySet<>();
-        objects.add(randomClass);
-        //Set<OWLAxiom> subset = RelatedObjectsHelper.getPartialAxioms(full, objects, null);
-        Set<IRI> iris = new ArraySet<>();
-        iris.add(randomClass.getIRI());
-        OWLOntology core = ExtractOperation.extract(full, iris, IRI.create("test"), null);
-        ioHelper.saveOntology(core, "test.owl");
     }
 }
