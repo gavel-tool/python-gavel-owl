@@ -15,5 +15,6 @@ include LICENSE
 include README.rst
 
 include tox.ini .travis.yml .appveyor.yml .readthedocs.yml .pre-commit-config.yaml
+graft jars
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib

@@ -36,8 +36,8 @@ setup(
     url='https://github.com/gavel-tool/python-gavel-owl',
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    package_data={'': ['jars/*.jar']},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
-    include_package_data=True,
     zip_safe=False,
     classifiers=[
         # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -74,6 +74,7 @@ setup(
     install_requires=[
         'click',
         'gavel',
+        'py4j'
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={
