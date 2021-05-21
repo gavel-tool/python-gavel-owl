@@ -39,27 +39,37 @@ To set up `python-gavel-owl` for local development:
 
 1. Fork `python-gavel-owl <https://github.com/gavel-tool/python-gavel-owl>`_
    (look for the "Fork" button).
-2. Clone your fork locally::
+2. Build java endpoint
 
-    git clone git@github.com:YOURGITHUBNAME/python-gavel-owl.git
+  a) If `make` is available on your system: `make`
+  b) Otherwise: ::
 
-3. Create a branch for local development::
+    cd java
+    mvn package
+    cp ..
+    cp java/target/java-1.0-SNAPSHOT.one-jar.jar src/gavel_owl/jars/api.jar
+
+3. Clone your fork locally::
+
+    git clone git@github.com:gavel-tool/python-gavel-owl.git
+
+4. Create a branch for local development::
 
     git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-4. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
+5. When you're done making changes run all the checks and docs builder with `tox <https://tox.readthedocs.io/en/latest/install.html>`_ one command::
 
     tox
 
-5. Commit your changes and push your branch to GitHub::
+6. Commit your changes and push your branch to GitHub::
 
     git add .
     git commit -m "Your detailed description of your changes."
     git push origin name-of-your-bugfix-or-feature
 
-6. Submit a pull request through the GitHub website.
+7. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
