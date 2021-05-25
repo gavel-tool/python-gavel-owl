@@ -72,6 +72,26 @@ Documentation
 https://python-gavel-owl.readthedocs.io/
 
 
+Usage
+=====
+
+There are several commands available that can be accessed via::
+
+    python3 -m gavel [command] [arguments]
+
+- start-server: starts a subprocess that connects the Python program to its Java components. Other functions such as translate will only run if this connection has been established beforehand. The optional arguments -jp and -pp can be used for custom ports. Otherwise, the default ports will be used. -jp and -pp can be used for all other commands (except prove) analogously.
+
+- translate: A Gavel function that translates the contents of a given file from one language, e.g. OWL, to another language, e.g. TPTP. If the option --save is used, the translation is stored in the given file, else it is gets displayed in the command line.
+
+- check-consistency: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
+
+- owl-prove: takes two arguments, an OWL file and a TPTP file. It uses Vampire to prove the conjectures provided in the TPTP file based on the translation of the OWL file. If the --steps flag is set, it will return the proof steps, otherwise it will only return the reasoner's result.
+
+- stop-server: Ends the Java connection established by start-server.
+
+- prove: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
+
+
 Development
 ===========
 
