@@ -63,10 +63,17 @@ Installation
 Usage
 =====
 
-This plugin extends gavel by a new `owl` dialect. This enables the various features of gavel to be used with owl ontologies.
-You can translate an existing owl ontology to first-order logic in tptp syntax using::
+This plugin extends gavel by a new `owl` dialect. This enables the various features of gavel to be used with owl ontologies. These functionalities use the java-based OWL-API. Therefore, you have to start the java backend in order to use most owl-based funtionalities. `gavel-owl` proviedes a simple command for that::
+
+    python -m gavel start-server
+
+After the server has been started successfully, you can translate an existing owl ontology to first-order logic in tptp syntax using::
 
     python -m gavel translate owl tptp your-ontology.owl
+
+The running java backend can be terminated::
+
+    python -m gavel stop-server
 
 There are several commands available that can be accessed via::
 
