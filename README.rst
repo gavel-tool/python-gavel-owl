@@ -68,14 +68,9 @@ You can translate an existing owl ontology to first-order logic in tptp syntax u
 
     python -m gavel translate owl tptp your-ontology.owl
 
-Use `python -m gavel translate --help` for further options
-
-Usage
-=====
-
 There are several commands available that can be accessed via::
 
-    python3 -m gavel [command] [arguments]
+    python3 -m gavel COMMAND [ARGUMENTS]
 
 - start-server: starts a subprocess that connects the Python program to its Java components. Other functions such as translate will only run if this connection has been established beforehand. The optional arguments -jp and -pp can be used for custom ports. Otherwise, the default ports will be used. -jp and -pp can be used for all other commands (except prove) analogously.
 
@@ -89,6 +84,7 @@ There are several commands available that can be accessed via::
 
 - prove: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
 
+Use `python -m gavel [COMMAND] --help` for further options
 
 Development
 ===========
