@@ -60,17 +60,15 @@ Installation
 
     pip install gavel-owl
 
-You can also install the in-development version with::
+Usage
+=====
 
-    pip install https://github.com/gavel-tool/python-gavel-owl/archive/master.zip
+This plugin extends gavel by a new `owl` dialect. This enables the various features of gavel to be used with owl ontologies.
+You can translate an existing owl ontology to first-order logic in tptp syntax using::
 
+    python -m gavel translate owl tptp your-ontology.owl
 
-Documentation
-=============
-
-
-https://python-gavel-owl.readthedocs.io/
-
+Use `python -m gavel translate --help` for further options
 
 Usage
 =====
