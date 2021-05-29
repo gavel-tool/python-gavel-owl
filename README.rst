@@ -84,7 +84,9 @@ There are several commands available that can be accessed via::
 
 - prove: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
 
-Use `python -m gavel [COMMAND] --help` for further options
+For further options use::
+
+    python -m gavel [COMMAND] --help
 
 Development
 ===========
