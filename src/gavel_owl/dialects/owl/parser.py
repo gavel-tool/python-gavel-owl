@@ -1,4 +1,5 @@
 from typing import Iterable
+import os
 
 import gavel.logic.problem as problem
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
@@ -54,6 +55,9 @@ class OWLParser(parser.StringBasedParser):
 
         sentence_enum = []
         i = 0
+        if not os.path.isabs(file_path):
+            file_path = os.path.abspath(file_path)
+
         for next_pair in app.translateOntologyFromFile(file_path):
             next_annotation = next_pair.getSecond()
             py_root = OWLParser.parseJavaToPython(node=next_pair.getFirst())

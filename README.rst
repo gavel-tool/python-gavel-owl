@@ -75,6 +75,10 @@ After the server has been started successfully, you can translate an existing
 owl ontology to first-order logic in tptp syntax using::
 
     python -m gavel translate owl tptp your-ontology.owl
+    
+You can also submit arguments to fist-order prover Vampire consisting of the translation of a given owl ontology as premises and conjectures formulated in tptp using::
+
+    python -m gavel owl-prove your-premises.owl your-conjectures.tptp
 
 The running java backend can be terminated::
 
@@ -82,7 +86,7 @@ The running java backend can be terminated::
 
 There are several commands available that can be accessed via::
 
-    python3 -m gavel COMMAND [ARGUMENTS]
+    python -m gavel COMMAND [ARGUMENTS]
 
 - start-server: starts a subprocess that connects the Python program to its Java components. Other functions such as translate will only run if this connection has been established beforehand. The optional arguments -jp and -pp can be used for custom ports. Otherwise, the default ports will be used. -jp and -pp can be used for all other commands (except prove) analogously.
 
