@@ -707,6 +707,13 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
                 )
             ));
         }
+
+        // individuals belong to owl:thing
+        if (axiom.getEntity().isIndividual()) {
+            res.add(df.getOWLThing().accept(new OWLClassExpressionTranslator(
+                ((OWLIndividual) axiom.getEntity()).accept(new OWLIndividualTranslator()))));
+        }
+
         return res;
     }
 
