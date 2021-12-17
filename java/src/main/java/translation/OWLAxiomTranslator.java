@@ -355,7 +355,7 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
         ArrayList<LogicElement> res = new ArrayList<>();
 
         List<OWLIndividual> individuals = axiom.getIndividualsAsList();
-        Constant referenceIndividual = individuals.get(0).accept(new OWLIndividualTranslator());
+        Symbol referenceIndividual = individuals.get(0).accept(new OWLIndividualTranslator());
         for (int i = 1; i < individuals.size(); i++) {
             res.add(new BinaryFormula(
                 referenceIndividual,
