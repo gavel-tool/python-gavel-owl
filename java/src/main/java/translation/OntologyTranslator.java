@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.vocab.OWLFacet;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OntologyTranslator {
     OWLOntology ontology;
@@ -27,6 +28,8 @@ public class OntologyTranslator {
     public ArrayList<AnnotatedLogicElement> translate() {
         // add mandatory background axioms
         ArrayList<AnnotatedLogicElement> result = new ArrayList<>(getMandatoryBackgroundAxioms());
+        ArrayList<AnnotatedLogicElement> axiomsContainingAnonymousIndividuals = new ArrayList<>();
+        Stream<OWLAnonymousIndividual> anonymousIndividuals = ontology.anonymousIndividuals();
 
         //check if certain keywords get used
         boolean nothing = false,
@@ -50,12 +53,35 @@ public class OntologyTranslator {
                 OWLTranslator.variableCounter = 0;
                 ArrayList<LogicElement> translated = axiom.accept(new OWLAxiomTranslator());
                 for (LogicElement t : translated) {
+                    if (axiom.anonymousIndividuals().count() > 0) {
+                        axiomsContainingAnonymousIndividuals.add(new AnnotatedLogicElement(t, axiom.toString()));
+                    }
                     result.add(new AnnotatedLogicElement(t, axiom.toString()));
                 }
+
             } catch (NullPointerException e) {
                 if (verbose) System.out.println("Implementation in OWLAxiomTranslator is missing");
                 if (verbose) System.out.println("\tAxiom >> " + axiom + " << was not translated");
             }
+        }
+
+        // if anonymous individuals exist: merge all axioms containing them into a single axiom, then existentially quantify
+        // over the anonymous individuals
+        if (anonymousIndividuals.count() > 0 && axiomsContainingAnonymousIndividuals.size() > 0) {
+            LogicElement conjunction = axiomsContainingAnonymousIndividuals.get(0).getFirst();
+            StringBuilder annotation = new StringBuilder("\\exists " + anonymousIndividuals.collect(Collectors.toList())
+                + ": " + axiomsContainingAnonymousIndividuals.get(0).getSecond());
+            for (int i = 1; i < axiomsContainingAnonymousIndividuals.size(); i++) {
+                conjunction = new BinaryFormula(conjunction, new BinaryConnective(0),
+                    axiomsContainingAnonymousIndividuals.get(i).getFirst());
+                annotation.append(" & ").append(axiomsContainingAnonymousIndividuals.get(i).getSecond());
+            }
+            result.add(new AnnotatedLogicElement(
+                new QuantifiedFormula(
+                    new Quantifier(1),
+                    anonymousIndividuals.map(x -> new Variable(x.toStringID())).toArray(Variable[]::new),
+                    conjunction),
+                annotation.toString()));
         }
 
         // add background axioms needed only if the keyword is used

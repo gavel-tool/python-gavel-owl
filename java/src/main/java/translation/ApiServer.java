@@ -68,9 +68,10 @@ public class ApiServer {
         System.out.println("Server started");
     }
 
-    public boolean isConsistent(String ontologyText) throws Exception {
+    public boolean isConsistent(String path) throws Exception {
         OWLReasonerFactory rf = new ReasonerFactory();
-        OWLReasoner r = rf.createReasoner(loadOntology(ontologyText));
+        OWLReasoner r = rf.createReasoner(
+            OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(new File(path)));
         return r.isConsistent();
     }
 

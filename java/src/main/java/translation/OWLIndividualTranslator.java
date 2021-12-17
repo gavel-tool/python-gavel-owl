@@ -1,20 +1,20 @@
 package translation;
 
 import fol.Constant;
+import fol.Symbol;
+import fol.Variable;
 import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
 import org.semanticweb.owlapi.model.OWLIndividualVisitorEx;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
 import javax.annotation.Nonnull;
 
-public class OWLIndividualTranslator extends OWLTranslator implements OWLIndividualVisitorEx<Constant> {
+public class OWLIndividualTranslator extends OWLTranslator implements OWLIndividualVisitorEx<Symbol> {
 
     //Anonymous Individual
     @Override
-    public Constant visit(@Nonnull OWLAnonymousIndividual individual) {
-        Constant res = new Constant(getEntityName(individual));
-        System.out.println("An anonymous individual called '" + res + "' appeared!");
-        return res;
+    public Variable visit(@Nonnull OWLAnonymousIndividual individual) {
+        return new Variable(getEntityName(individual));
     }
 
     //Named Individual
