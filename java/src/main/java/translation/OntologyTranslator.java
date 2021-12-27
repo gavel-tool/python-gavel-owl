@@ -7,9 +7,9 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class OntologyTranslator {
     OWLOntology ontology;
@@ -29,7 +29,6 @@ public class OntologyTranslator {
         // add mandatory background axioms
         ArrayList<AnnotatedLogicElement> result = new ArrayList<>(getMandatoryBackgroundAxioms());
         ArrayList<AnnotatedLogicElement> axiomsContainingAnonymousIndividuals = new ArrayList<>();
-        Stream<OWLAnonymousIndividual> anonymousIndividuals = ontology.anonymousIndividuals();
 
         //check if certain keywords get used
         boolean nothing = false,
@@ -55,8 +54,9 @@ public class OntologyTranslator {
                 for (LogicElement t : translated) {
                     if (axiom.anonymousIndividuals().count() > 0) {
                         axiomsContainingAnonymousIndividuals.add(new AnnotatedLogicElement(t, axiom.toString()));
+                    } else {
+                        result.add(new AnnotatedLogicElement(t, axiom.toString()));
                     }
-                    result.add(new AnnotatedLogicElement(t, axiom.toString()));
                 }
 
             } catch (NullPointerException e) {
@@ -66,10 +66,20 @@ public class OntologyTranslator {
         }
 
         // if anonymous individuals exist: merge all axioms containing them into a single axiom, then existentially quantify
-        // over the anonymous individuals
-        if (anonymousIndividuals.count() > 0 && axiomsContainingAnonymousIndividuals.size() > 0) {
+        // over the anonymous individuals, add distinctness of variables
+        if (ontology.anonymousIndividuals().count() > 0 && axiomsContainingAnonymousIndividuals.size() > 0) {
+            Variable[] anonIndividualVariables = ontology.anonymousIndividuals()
+                .map(x -> (Variable) x.accept(new OWLIndividualTranslator()))
+                .toArray(Variable[]::new);
             LogicElement conjunction = axiomsContainingAnonymousIndividuals.get(0).getFirst();
-            StringBuilder annotation = new StringBuilder("\\exists " + anonymousIndividuals.collect(Collectors.toList())
+            for (int i = 0; i < anonIndividualVariables.length; i++) {
+                for (int j = i + 1; j < anonIndividualVariables.length; j++) {
+                    conjunction = new BinaryFormula(conjunction, new BinaryConnective(0), new BinaryFormula(
+                        anonIndividualVariables[i], new BinaryConnective(9), anonIndividualVariables[j]));
+                    // binary connective 0: conjuncton, 9: NEQ
+                }
+            }
+            StringBuilder annotation = new StringBuilder("\\exists " + Arrays.toString(anonIndividualVariables)
                 + ": " + axiomsContainingAnonymousIndividuals.get(0).getSecond());
             for (int i = 1; i < axiomsContainingAnonymousIndividuals.size(); i++) {
                 conjunction = new BinaryFormula(conjunction, new BinaryConnective(0),
@@ -79,7 +89,7 @@ public class OntologyTranslator {
             result.add(new AnnotatedLogicElement(
                 new QuantifiedFormula(
                     new Quantifier(1),
-                    anonymousIndividuals.map(x -> new Variable(x.toStringID())).toArray(Variable[]::new),
+                    anonIndividualVariables,
                     conjunction),
                 annotation.toString()));
         }

@@ -16,8 +16,7 @@ public abstract class OWLTranslator {
 
     //helper function: combines the elements of a stream with a binary connective
     public LogicElement interlinkBinaryFormulas(int binaryConnectiveId, Stream<LogicElement> elemStream) {
-        LogicElement[] elementsNull = elemStream.toArray(LogicElement[]::new);
-        LogicElement[] elements = Arrays.stream(elementsNull).filter(Objects::nonNull).toArray(LogicElement[]::new);
+        LogicElement[] elements = elemStream.filter(Objects::nonNull).toArray(LogicElement[]::new);
         if (elements.length == 0) return null;
         if (elements.length == 1) return elements[0];
 
