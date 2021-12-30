@@ -3,7 +3,6 @@ package translation;
 import fol.*;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.metrics.AxiomCount;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -21,9 +20,6 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -31,8 +27,9 @@ import static java.lang.Integer.parseInt;
 public class ApiServer {
 
     public static final boolean USE_FULL_IRI = false;
+    public static final int MAX_LEV_DIST = 5;
 
-    public HashMap<String, String> labelToIRIMapping;
+    public HashMap<String, HashMap<String, String>> labelToIRIMapping = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         //arg0 is the java port, arg1 the python port
@@ -72,7 +69,7 @@ public class ApiServer {
             .callbackClient(pp, InetAddress.getByName("127.0.0.1"))
             .build();
         server.start();
-        System.out.println("Server started");
+        System.out.println("Server started (jp: " + jp + ", pp: " + pp + ")");
     }
 
     public boolean isConsistent(String path) throws Exception {
@@ -172,7 +169,7 @@ public class ApiServer {
         return res_list.toArray(q);
     }
 
-    private HashMap<String, String> getLabeltoIRIMapping(OWLOntology ontology) throws Exception {
+    private HashMap<String, String> getLabelToIRIMapping(OWLOntology ontology) throws Exception {
         ontology.signature(Imports.INCLUDED).forEach(HasIRI::getIRI);
         ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
             new ArrayList<>(),
@@ -208,9 +205,6 @@ public class ApiServer {
 
     // returns the (most likely) match for a given symbol
     public String getIRIMatch(String ontologyPath, String symbol) throws Exception {
-        // logging https://www.geeksforgeeks.org/logger-warning-method-in-java-with-examples/
-        Logger logger = Logger.getLogger(ApiServer.class.getName());
-        logger.setLevel(Level.WARNING);
         // check if symbol is a valid IRI
         // use URL pattern according to (RFC2396)
         // https://stackoverflow.com/a/13958706
@@ -218,50 +212,63 @@ public class ApiServer {
         //if (symbol.matches(urlPattern)) {
         //    return "IRI__" + symbol;
         //}
-        if (labelToIRIMapping == null) {
-            labelToIRIMapping = getLabeltoIRIMapping(OWLManager.createOWLOntologyManager()
-                .loadOntologyFromOntologyDocument(new File(ontologyPath)));
+        if (labelToIRIMapping.get(ontologyPath) == null) {
+            labelToIRIMapping.put(ontologyPath, getLabelToIRIMapping(OWLManager.createOWLOntologyManager()
+                .loadOntologyFromOntologyDocument(new File(ontologyPath))));
         }
 
-        if (labelToIRIMapping.isEmpty()) {
-            logger.warning("No IRI found for " + symbol);
+        HashMap<String, String> ontologyLabelMapping = labelToIRIMapping.get(ontologyPath);
+        if (ontologyLabelMapping.isEmpty()) {
+            System.out.println("No IRI found for " + symbol);
             return symbol;
         }
         // check for exact matches
-        if (labelToIRIMapping.containsKey(symbol)) {
-            return labelToIRIMapping.get(symbol);
+        if (ontologyLabelMapping.containsKey(symbol)) {
+            return ontologyLabelMapping.get(symbol);
         }
-        String[] labels = labelToIRIMapping.keySet().toArray(new String[0]);
+        if (ontologyLabelMapping.containsValue(symbol)) {
+            return symbol;
+        }
+        // use set of all labels and IRIs
+        String[] labels = ontologyLabelMapping.keySet().toArray(new String[0]);
+        String[] iris = ontologyLabelMapping.values().toArray(new String[0]);
         // find most similar match if exact match doesn't exists
-        int lowest_lev_dist = levDist(labels[0], symbol);
+        int lowest_lev_dist = MAX_LEV_DIST;
         ArrayList<String> bestMatches = new ArrayList<>();
-        bestMatches.add(labels[0]);
-        for (int i = 1; i < labels.length; i++) {
+        for (int i = 0; i < labels.length + iris.length; i++) {
+            // iterate through labels and iris
+            String match = i < labels.length ? labels[i] : iris[i-labels.length];
             // sort out very too apart labels
-            if (Math.abs(labels[i].length() - symbol.length()) > lowest_lev_dist) {
+            if (Math.abs(match.length() - symbol.length()) > lowest_lev_dist) {
                 continue;
             }
             //System.out.println(labels[i]);
-            int lev_dist = levDist(labels[i], symbol);
+            int lev_dist = levDist(match, symbol);
             //System.out.println("Distance between " + labels[i] + " and " + symbol + ": " + lev_dist);
             if (lev_dist < lowest_lev_dist) {
                 lowest_lev_dist = lev_dist;
                 bestMatches.clear();
-                bestMatches.add(labels[i]);
+                bestMatches.add(i < labels.length ? ontologyLabelMapping.get(match) : match);
             } else if (lev_dist == lowest_lev_dist) {
-                bestMatches.add(labels[i]);
+                bestMatches.add(i < labels.length ? ontologyLabelMapping.get(match) : match);
             }
         }
 
+        if (bestMatches.isEmpty()) {
+            System.out.println("No match found for " + symbol + " with a distance <= " + MAX_LEV_DIST);
+            return null;
+        }
+
         if (bestMatches.size() > 1) {
-            logger.warning("No perfect match found for " + symbol + ". The closest labels are " + bestMatches
+            System.out.println("No perfect match found for " + symbol + ". The closest labels are " + bestMatches
                 + "  (distance: " + lowest_lev_dist + "). " + bestMatches.get(0) + " was chosen.");
         }
         else {
-            logger.warning("No perfect match found for " + symbol + ". The closest label is " + bestMatches.get(0)
+            System.out.println("No perfect match found for " + symbol + ". The closest label is " + bestMatches.get(0)
                 + " (distance: " + lowest_lev_dist + ")");
         }
-        return labelToIRIMapping.get(bestMatches.get(0));
+
+        return bestMatches.get(0);
     }
 
     public boolean owlOntologyEntails(String premise_path, String conclusion_path) throws OWLOntologyCreationException {

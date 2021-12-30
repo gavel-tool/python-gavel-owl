@@ -1,17 +1,10 @@
 import logging
-import os
+
 import ply.lex as lex
 import ply.yacc as yacc
 import re
 
-from pathlib import Path
-
-import macleod.Ontology
-from macleod.logical.connective import (Conjunction, Disjunction, Connective, Implication, Biconditional)
-from macleod.logical.logical import Logical
-from macleod.logical.negation import Negation
-from macleod.logical.quantifier import (Universal, Existential, Quantifier)
-from macleod.logical.symbol import (Function, Predicate)
+from gavel.logic import logic
 
 LOGGER = logging.getLogger(__name__)
 
@@ -250,7 +243,7 @@ def p_negation(p):
     negation : LPAREN NOT axiom RPAREN
     """
 
-    p[0] = Negation(p[3])
+    p[0] = logic.UnaryFormula(logic.UnaryConnective.NEGATION, p[3])
 
 
 def p_conjunction(p):
@@ -258,7 +251,16 @@ def p_conjunction(p):
     conjunction : LPAREN AND axiom_list RPAREN
     """
 
-    p[0] = Conjunction(p[3])
+    if isinstance(p[3], list):
+        if len(p[3]) == 1:
+            p[0] = p[3][0]
+        if len(p[3]) >= 2:
+            conj_chain = logic.BinaryFormula(p[3][0], logic.BinaryConnective.CONJUNCTION, p[3][1])
+            for i in range(2, len(p[3])):
+                conj_chain = logic.BinaryFormula(conj_chain, logic.BinaryConnective.CONJUNCTION, p[3][i])
+            p[0] = conj_chain
+    else:
+        p[0] = p[3]
 
 
 def p_conjunction_error(p):
@@ -274,7 +276,16 @@ def p_disjunction(p):
     disjunction : LPAREN OR axiom_list RPAREN
     """
 
-    p[0] = Disjunction(p[3])
+    if isinstance(p[3], list):
+        if len(p[3]) == 1:
+            p[0] = p[3][0]
+        if len(p[3]) >= 2:
+            conj_chain = logic.BinaryFormula(p[3][0], logic.BinaryConnective.DISJUNCTION, p[3][1])
+            for i in range(2, len(p[3])):
+                conj_chain = logic.BinaryFormula(conj_chain, logic.BinaryConnective.DISJUNCTION, p[3][i])
+            p[0] = conj_chain
+    else:
+        p[0] = p[3]
 
 
 def p_disjunction_error(p):
@@ -314,7 +325,7 @@ def p_implication(p):
 
     # if statement throws "NameError: name 'conditionals' is not defined", disable
     # if conditionals:
-    p[0] = Implication([p[3], p[4]])
+    p[0] = logic.BinaryFormula(p[3], logic.BinaryConnective.IMPLICATION, p[4])
     # else:
     #    p[0] = Disjunction([Negation(p[3]), p[4]])
 
@@ -338,7 +349,7 @@ def p_biconditional(p):
 
     # if statement throws "NameError: name 'conditionals' is not defined", disable
     # if conditionals:
-    p[0] = Biconditional([p[3], p[4]])
+    p[0] = logic.BinaryFormula(p[3], logic.BinaryConnective.BIIMPLICATION, p[4])
     # else:
     #    p[0] = Conjunction([Disjunction([Negation(p[3]), p[4]]),
     #                               Disjunction([Negation(p[4]), p[3]])
@@ -362,7 +373,7 @@ def p_existential(p):
     existential : LPAREN EXISTS LPAREN nonlogicals RPAREN axiom RPAREN
     """
 
-    p[0] = Existential(p[4], p[6])
+    p[0] = logic.QuantifiedFormula(logic.Quantifier.EXISTENTIAL, p[4], p[6])
 
 
 def p_existential_error(p):
@@ -382,7 +393,7 @@ def p_universal(p):
     universal : LPAREN FORALL LPAREN nonlogicals RPAREN axiom RPAREN
     """
 
-    p[0] = Universal(p[4], p[6])
+    p[0] = logic.QuantifiedFormula(logic.Quantifier.UNIVERSAL, p[4], p[6])
 
 
 def p_universal_error(p):
@@ -396,24 +407,12 @@ def p_universal_error(p):
     raise ParseError("Error parsing term in Universal")
 
 
-def p_universal_error(p):
-    """
-    universal : LPAREN FORALL LPAREN error
-    universal : LPAREN FORALL LPAREN nonlogicals RPAREN error
-    """
-
-    if is_error(p.slice[4]):
-        raise TypeError("Error in universal: bad nested formula")
-
-    raise TypeError("Error in universal: bad formula")
-
-
 def p_predicate(p):
     """
     predicate : LPAREN NONLOGICAL parameter RPAREN
     """
 
-    p[0] = Predicate(p[2], p[3])
+    p[0] = logic.PredicateExpression(p[2], p[3])
 
 
 def p_predicate_error(p):
@@ -462,7 +461,7 @@ def p_function(p):
     function : LPAREN NONLOGICAL parameter RPAREN
     """
 
-    p[0] = Function(p[2], p[3])
+    p[0] = logic.FunctorExpression(p[2], p[3])
 
 
 def p_function_error(p):
@@ -554,67 +553,6 @@ def p_error(p):
         ' '.join(types)))
 
     return p
-
-
-def parse_file(path, sub, base, resolve=False, name=None, preserve_conditionals=True):
-    """
-    Accepts a path to a Common Logic file and parses it to return an Ontology object.
-
-    :param path, path to common logic file
-    :param sub, path component to be substituted
-    :param base, new path component
-    :param resolve, resolve imports?
-    :param name, for overriding the default naming
-    :param preserve_conditionals, keep conditionals as it (True, default) or convert to disjunctions
-    :return Ontology onto, newly constructed ontology object
-    """
-
-    path = os.path.normpath(os.path.join(base, path))
-
-    if not os.path.isfile(path):
-        LOGGER.warning("Attempted to parse non-existent file: " + path)
-        return None
-
-    global parser
-    global conditionals
-    conditionals = preserve_conditionals
-    # if conditionals:
-    #    LOGGER.info("Preserving all conditionals")
-    # else:
-    #    LOGGER.info("Eliminating all conditionals")
-
-    ontology = macleod.Ontology(path, preserve_conditionals=conditionals)
-
-    if name is not None:
-        ontology.name = name
-
-    with open(path, 'r') as f:
-        buff = f.read()
-
-    if not buff:
-        return None
-
-    lex.lex(reflags=re.UNICODE)
-    parser = yacc.yacc()
-
-    parsed_objects = yacc.parse(buff)
-
-    ontology.basepath = (sub, base)
-
-    for logical_thing in parsed_objects:
-
-        if isinstance(logical_thing, Logical):
-
-            ontology.add_axiom(logical_thing)
-
-        elif isinstance(logical_thing, str):
-
-            ontology.add_import(logical_thing)
-
-    if resolve:
-        ontology.resolve_imports()
-
-    return ontology
 
 
 # not part of macleod, added locally

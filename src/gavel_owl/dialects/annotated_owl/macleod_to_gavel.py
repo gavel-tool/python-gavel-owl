@@ -1,4 +1,3 @@
-import macleod.logical.logical, macleod.logical.quantifier as m
 from macleod.logical.connective import (Conjunction, Disjunction, Connective, Implication, Biconditional)
 from macleod.logical.logical import Logical
 from macleod.logical.negation import Negation
