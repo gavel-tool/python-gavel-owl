@@ -12,6 +12,7 @@ from lark import Token
 from py4j.java_collections import ListConverter
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 
+from src.gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
 from src.gavel_owl.dialects.annotated_owl.macleod_clif_parser import parse_string
 
 
@@ -70,13 +71,45 @@ def convert_tptp_fragments_to_internal_gavel(formulae):
 # input: complete TPTP axioms
 # transforms TPTP axioms into the internal Gavel representation
 def convert_clif_to_internal_gavel(formulas):
-    return map(lambda x: parse_string(x)[0], formulas)
+    parsed_formulas = list(map(lambda x: parse_string(x)[0], formulas))
+    # distinguish between variables and constants:
+    return map(lambda x: find_variables(x, []), parsed_formulas)
+
+# function that replaces FOLSymbol with Gavel-Variable (if the symbol is quantified) or -Constant (else)
+def find_variables(element, variables):
+    if isinstance(element, FOLSymbol):
+        if element.symbol in variables:
+            return Variable(element.symbol)
+        else:
+            return Constant(element.symbol)
+
+    if element.__visit_name__ == "quantified_formula":
+        return QuantifiedFormula(
+            element.quantifier,
+            element.variables,
+            find_variables(element.formula, list(map(lambda var: var.symbol, element.variables)) + variables))
+    elif element.__visit_name__ == "binary_formula":
+        return BinaryFormula(
+            find_variables(element.left, variables), element.operator,
+            find_variables(element.right, variables))
+    elif element.__visit_name__ == "predicate_expression":
+        return PredicateExpression(element.predicate,
+                                   [find_variables(arg, variables) for arg in element.arguments])
+    elif element.__visit_name__ == "functor_expression":
+        return FunctorExpression(element.functor,
+                                 [find_variables(arg, variables) for arg in element.arguments])
+    elif element.__visit_name__ == "unary_formula":
+        return UnaryFormula(element.connective, find_variables(element.formula, variables))
+    else:
+        return element
 
 
 # takes a list of parsed FOL formulas, returns all symbols
 def get_symbols(formula_list):
     symbols = []
+    print(formula_list)
     for formula in formula_list:
+        print(formula)
         for s in formula.symbols():
             if type(s) == Token:
                 symbol = remove_apostrophes(s.value)
@@ -89,6 +122,7 @@ def get_symbols(formula_list):
 
 class AnnotatedOWLParser(base_parser.StringBasedParser):
 
+    # TODO: test parse function
     def parse(self, ontology: Parseable, *args, **kwargs) -> Iterable[Target]:
         ontology_file, name = tempfile.mkstemp()
         os.write(ontology_file, ontology)
@@ -104,9 +138,7 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
         clif_properties = list(kwargs["clif-properties"]) if "clif-properties" in kwargs else None
         tptp_properties = list(kwargs["tptp-properties"]) if "tptp-properties" in kwargs else None
 
-        verbose = True  # TODO: remove
-        shorten_iris = True
-        ontology_handler = OntologyHandler(ontology_path, jp, pp, verbose, shorten_iris, tptp_properties,
+        ontology_handler = OntologyHandler(ontology_path, jp, pp, True, shorten_iris, tptp_properties,
                                            clif_properties)
 
         return ontology_handler.build_combined_theory()
@@ -198,7 +230,7 @@ class OntologyHandler:
         return symbol_iri_dict
 
     # returns a Gavel problem consisting of the translation of the OWL ontology and the FOL annotations
-    def build_combined_theory(self):
+    def build_combined_theory(self, dol_export=None):
         start = time.time()
 
         self.get_annotation_properties()

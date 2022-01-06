@@ -6,6 +6,8 @@ import re
 
 from gavel.logic import logic
 
+from src.gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
+
 LOGGER = logging.getLogger(__name__)
 
 global parser
@@ -372,8 +374,10 @@ def p_existential(p):
     """
     existential : LPAREN EXISTS LPAREN nonlogicals RPAREN axiom RPAREN
     """
-
-    p[0] = logic.QuantifiedFormula(logic.Quantifier.EXISTENTIAL, p[4], p[6])
+    variables = []
+    for symbol in p[4]:
+        variables.append(logic.Variable(symbol))
+    p[0] = logic.QuantifiedFormula(logic.Quantifier.EXISTENTIAL, variables, p[6])
 
 
 def p_existential_error(p):
@@ -392,8 +396,10 @@ def p_universal(p):
     """
     universal : LPAREN FORALL LPAREN nonlogicals RPAREN axiom RPAREN
     """
-
-    p[0] = logic.QuantifiedFormula(logic.Quantifier.UNIVERSAL, p[4], p[6])
+    variables = []
+    for symbol in p[4]:
+        variables.append(logic.Variable(symbol))
+    p[0] = logic.QuantifiedFormula(logic.Quantifier.UNIVERSAL, variables, p[6])
 
 
 def p_universal_error(p):
@@ -446,14 +452,14 @@ def p_parameter(p):
             else:
                 parameters.append(p[2])
 
-        p[0] = parameters
+        p[0] = [FOLSymbol(param) for param in parameters]
 
     else:
 
         if isinstance(p[1], list):
-            p[0] = p[1]
+            p[0] = [FOLSymbol(param) for param in p[1]]
         else:
-            p[0] = [p[1]]
+            p[0] = [FOLSymbol(p[1])]
 
 
 def p_function(p):
@@ -555,7 +561,7 @@ def p_error(p):
     return p
 
 
-# not part of macleod, added locally
+# not part of macleod, added for annotated owl parser
 def parse_string(str):
     lex.lex(reflags=re.UNICODE)
     yacc.yacc()
