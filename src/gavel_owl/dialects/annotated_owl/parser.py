@@ -2,7 +2,6 @@ import os.path
 
 import gavel.dialects.base.parser as base_parser
 import time
-import tempfile
 
 from gavel.dialects.base.parser import Parseable
 from gavel.dialects.tptp.parser import *
@@ -75,6 +74,7 @@ def convert_clif_to_internal_gavel(formulas):
     # distinguish between variables and constants:
     return map(lambda x: find_variables(x, []), parsed_formulas)
 
+
 # function that replaces FOLSymbol with Gavel-Variable (if the symbol is quantified) or -Constant (else)
 def find_variables(element, variables):
     if isinstance(element, FOLSymbol):
@@ -107,9 +107,7 @@ def find_variables(element, variables):
 # takes a list of parsed FOL formulas, returns all symbols
 def get_symbols(formula_list):
     symbols = []
-    print(formula_list)
     for formula in formula_list:
-        print(formula)
         for s in formula.symbols():
             if type(s) == Token:
                 symbol = remove_apostrophes(s.value)
@@ -122,23 +120,16 @@ def get_symbols(formula_list):
 
 class AnnotatedOWLParser(base_parser.StringBasedParser):
 
-    # TODO: test parse function
     def parse(self, ontology: Parseable, *args, **kwargs) -> Iterable[Target]:
-        ontology_file, name = tempfile.mkstemp()
-        os.write(ontology_file, ontology)
-        os.close(ontology_file)
-
-        return self.parse_from_file(name, *args, **kwargs)
+        raise NotImplementedError
 
     def parse_from_file(self, ontology_path, *args, **kwargs):
-        jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
-        pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
-        verbose = bool(kwargs["verbose"]) if "verbose" in kwargs else False
-        shorten_iris = bool(kwargs["shorten-iris"]) if "shorten-iris" in kwargs else False
-        clif_properties = list(kwargs["clif-properties"]) if "clif-properties" in kwargs else None
-        tptp_properties = list(kwargs["tptp-properties"]) if "tptp-properties" in kwargs else None
-
-        ontology_handler = OntologyHandler(ontology_path, jp, pp, True, shorten_iris, tptp_properties,
+        jp = int(kwargs["jp"][0]) if "jp" in kwargs else 25333
+        pp = int(kwargs["pp"][0]) if "pp" in kwargs else 25334
+        verbose = True if "verbose" in kwargs else False
+        clif_properties = kwargs["clif-properties"] if "clif-properties" in kwargs else None
+        tptp_properties = kwargs["tptp-properties"] if "tptp-properties" in kwargs else None
+        ontology_handler = OntologyHandler(ontology_path, jp, pp, verbose, tptp_properties,
                                            clif_properties)
 
         return ontology_handler.build_combined_theory()
@@ -162,7 +153,7 @@ def build_annotated_formulas(formulas, original_annotations):
 
 class OntologyHandler:
 
-    def __init__(self, ontology, jp=25333, pp=25334, verbose=True, shorten_iris=False, tptp_annotation_properties=None,
+    def __init__(self, ontology, jp=25333, pp=25334, verbose=True, tptp_annotation_properties=None,
                  clif_annotation_properties=None):
 
         if not os.path.isabs(ontology):
@@ -171,14 +162,11 @@ class OntologyHandler:
         self.jp = jp
         self.pp = pp
         self.verbose = verbose
-        self.shorten_iris = shorten_iris
         if tptp_annotation_properties is None:
-            tptp_annotation_properties = ["http://example.org/tptp_annotation",
-                                          "http://openenergy-platform.org/ontology/oeo/OEO_00140158"]
+            tptp_annotation_properties = ["http://example.org/tptp_annotation"]
         self.tptp_annotation_properties = tptp_annotation_properties
         if clif_annotation_properties is None:
-            clif_annotation_properties = ["http://example.org/clif_annotation",
-                                          "http://openenergy-platform.org/ontology/oeo/OEO_00140157"]
+            clif_annotation_properties = ["http://example.org/clif_annotation"]
         self.clif_annotation_properties = clif_annotation_properties
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(self.jp)),
@@ -271,7 +259,7 @@ class OntologyHandler:
         formulas_using_iris = apply_mapping(parsed_formulas, symbol_iri_dict)
         annot_tptp_lines = build_annotated_formulas(formulas_using_iris, clif_annot + tptp_annot)
         if self.verbose:
-            print(f'TPTP Formulas with IRIs:')
+            print(f'Formulas with IRIs:')
             for f in annot_tptp_lines:
                 print(f)
 

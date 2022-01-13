@@ -8,4 +8,4 @@ class AnnotatedOWLDialect(Dialect):
 
     @classmethod
     def _identifier(cls):
-        return "annotated_owl"
+        return "annotated-owl"

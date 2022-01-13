@@ -25,6 +25,7 @@ from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerPara
 import os
 from gavel_owl import package_directory
 
+from src.gavel_owl.dialects.annotated_owl.macleod_clif_parser import parse_string
 from src.gavel_owl.dialects.annotated_owl.parser import AnnotatedOWLParser
 
 
@@ -145,8 +146,8 @@ def translate_annotated_owl_tptp(path, save):
 
 
 if __name__ == '__main__':
-    translate_annotated_owl_tptp('kgemt_t04P.omn', 'kgemt_t04P_tptp2.p')
-    # todo: annotation properties mit labeln, gekürzte iris
+    print(parse_string('(forall (a b) (if (precedes a b) (not (precedes b a))))')[0])
+    translate_annotated_owl_tptp('../../ba_architecture_example.omn', 'ba_architecture_example_tptp.p')
 
 owl.add_command(start_server)
 owl.add_command(stop_server)

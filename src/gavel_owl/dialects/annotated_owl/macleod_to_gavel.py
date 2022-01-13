@@ -7,41 +7,41 @@ import gavel.logic.logic as gavel
 
 
 def to_gavel(structure):
-    if (isinstance(structure, Logical)):
-        if (isinstance(structure, Conjunction)):
+    if isinstance(structure, Logical):
+        if isinstance(structure, Conjunction):
             return gavel.BinaryFormula(to_gavel(structure.terms[0]),
                                        gavel.BinaryConnective.CONJUNCTION,
                                        to_gavel(structure.terms[1]))
-        elif (isinstance(structure, Disjunction)):
+        elif isinstance(structure, Disjunction):
             return gavel.BinaryFormula(to_gavel(structure.terms[0]),
                                        gavel.BinaryConnective.DISJUNCTION,
                                        to_gavel(structure.terms[1]))
-        elif (isinstance(structure, Implication)):
+        elif isinstance(structure, Implication):
             return gavel.BinaryFormula(to_gavel(structure.terms[0]),
                                        gavel.BinaryConnective.IMPLICATION,
                                        to_gavel(structure.terms[1]))
-        elif (isinstance(structure, Biconditional)):
+        elif isinstance(structure, Biconditional):
             return gavel.BinaryFormula(to_gavel(structure.terms[0]),
                                        gavel.BinaryConnective.BIIMPLICATION,
                                        to_gavel(structure.terms[1]))
-        elif (isinstance(structure, Negation)):
+        elif isinstance(structure, Negation):
             return gavel.UnaryFormula(gavel.UnaryConnective.NEGATION, to_gavel(structure.terms[0]))
-        elif (isinstance(structure, Universal)):
+        elif isinstance(structure, Universal):
             vars = []
             for v in structure.variables:
                 vars.append(gavel.Variable(v))
             return gavel.QuantifiedFormula(gavel.Quantifier.UNIVERSAL, vars, to_gavel(structure.terms[0]))
-        elif (isinstance(structure, Existential)):
+        elif isinstance(structure, Existential):
             vars = []
             for v in structure.variables:
                 vars.append(gavel.Variable(v))
             return gavel.QuantifiedFormula(gavel.Quantifier.EXISTENTIAL, vars, to_gavel(structure.terms[0]))
-        elif (isinstance(structure, Predicate)):
+        elif isinstance(structure, Predicate):
             vars = []
             for var in structure.variables:
                 vars.append(gavel.Variable(var))
             return gavel.PredicateExpression(structure.name, vars)
-        elif (isinstance(structure, Function)):
+        elif isinstance(structure, Function):
             vars = []
             for var in structure.variables:
                 vars.append(gavel.Variable(var))

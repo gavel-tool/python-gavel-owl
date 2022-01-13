@@ -563,8 +563,10 @@ def p_error(p):
 
 # not part of macleod, added for annotated owl parser
 def parse_string(str):
+    global parser
+
     lex.lex(reflags=re.UNICODE)
-    yacc.yacc()
+    parser = yacc.yacc()
 
     parsed_objects = yacc.parse(str)
 

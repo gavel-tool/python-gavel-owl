@@ -45,8 +45,8 @@ class OWLParser(parser.StringBasedParser):
 
 
     def parse_from_file(self, file_path, *args, **kwargs):
-        jp = int(kwargs["jp"]) if "jp" in kwargs else 25333
-        pp = int(kwargs["pp"]) if "pp" in kwargs else 25334
+        jp = int(kwargs["jp"][0]) if "jp" in kwargs else 25333
+        pp = int(kwargs["pp"][0]) if "pp" in kwargs else 25334
 
         gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                               callback_server_parameters=CallbackServerParameters(port=int(pp)))
