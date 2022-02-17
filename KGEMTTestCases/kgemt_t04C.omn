@@ -1,0 +1,31 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+Class: :ovgu_part
+
+
+ObjectProperty: :overlap
+
+
+ObjectProperty: :part_of
+
+
+Individual: :ovgu
+
+    Types:
+        :part_of value :magdeburg
+
+
+Individual: :magdeburg
+
+
+

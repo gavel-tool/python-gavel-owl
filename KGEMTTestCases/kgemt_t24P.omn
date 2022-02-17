@@ -1,0 +1,50 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :proper_part_of
+
+
+ObjectProperty: :interior_proper_part_of
+
+    Annotations:
+        :tptp_annotation "![X, Y]: (interior_proper_part_of(X, Y) <=> (proper_part_of(X, Y) & ![Z]: (connected_to(Z, X) => overlap(Z, Y))))"
+
+
+ObjectProperty: :connected_to
+
+
+ObjectProperty: :overlap
+
+
+Individual: :magdeburg
+
+
+Individual: :ovgu
+
+    Annotations:
+        :tptp_annotation "![X]: ((X != buckau & X != alte_neustadt) => ~connected_to(X, ovgu))"
+    Types:
+        :proper_part_of value :magdeburg
+
+Individual: :buckau
+
+    Types:
+        :overlap value :magdeburg,
+        :connected_to value :ovgu
+
+
+
+Individual: :alte_neustadt
+
+    Types:
+        :overlap value :magdeburg,
+        :connected_to value :ovgu

@@ -1,0 +1,31 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :proper_part_of
+
+
+Individual: :magdeburg
+
+    Facts:
+        not :proper_part_of :ovgu
+
+
+Individual: :ovgu
+
+    Facts:
+        not :proper_part_of :ovgu
+
+
+Individual: :ovgu_computer_science_faculty
+
+    Types:
+        :proper_part_of value :magdeburg

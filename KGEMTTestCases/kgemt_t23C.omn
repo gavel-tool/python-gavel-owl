@@ -1,0 +1,28 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :proper_part_of
+
+
+ObjectProperty: :interior_proper_part_of
+
+
+ObjectProperty: :tangential_proper_part_of
+
+
+Individual: :ovgu_computer_science_faculty
+
+    Types:
+        :tangential_proper_part_of value :ovgu
+
+
+Individual: :ovgu

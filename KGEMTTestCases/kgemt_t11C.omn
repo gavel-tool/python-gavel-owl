@@ -1,0 +1,29 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+Class: :self_connected
+
+
+ObjectProperty: :connected_to
+
+
+Individual: :magdeburg
+
+    Types:
+        :self_connected
+
+
+Individual: :eastelbian_magdeburg
+
+
+Individual: :westelbian_magdeburg
+

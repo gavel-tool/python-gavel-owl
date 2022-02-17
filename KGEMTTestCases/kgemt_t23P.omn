@@ -1,0 +1,36 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :proper_part_of
+
+
+ObjectProperty: :interior_proper_part_of
+
+
+ObjectProperty: :tangential_proper_part_of
+
+    Annotations:
+        :tptp_annotation "![X, Y]: (tangential_proper_part_of(X, Y) <=> (proper_part_of(X, Y) & ~interior_proper_part_of(X, Y)))"
+
+
+Individual: :ovgu_computer_science_faculty
+
+    Types:
+        :proper_part_of value :ovgu
+
+    Facts:
+        not :interior_proper_part_of :ovgu
+
+
+Individual: :ovgu
+
+

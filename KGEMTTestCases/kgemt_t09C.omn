@@ -1,0 +1,34 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+Class: :connection_to_magdeburg
+
+
+Class: :connection_to_ovgu
+
+
+ObjectProperty: :enclosure
+
+
+ObjectProperty: :connection
+
+
+Individual: :ovgu
+
+    Types:
+        :enclosure value :magdeburg
+
+
+Individual: :magdeburg
+
+
+

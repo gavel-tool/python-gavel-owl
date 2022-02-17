@@ -1,0 +1,12 @@
+Prefix( : = <http://example.org/> )
+Ontology(
+Declaration(Class( :Person ))
+Declaration( NamedIndividual( :Mary ) )
+Declaration(ObjectProperty( :hasAncestor ))
+
+SubClassOf(
+:Person
+ObjectMinCardinality( 2 :hasAncestor :Person ) )
+AnnotationAssertion(:tptp_annotation :Person "![X]: (person(X) => (?[Y,Z]: (person(Y) & person(Z) & hasAncestor(X,Y) & hasAncestor(X,Z) & Y != Z)))")
+ClassAssertion( :Person :Mary )
+)

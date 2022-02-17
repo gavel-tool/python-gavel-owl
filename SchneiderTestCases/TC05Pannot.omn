@@ -1,0 +1,9 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( Class( :Person ) )
+Declaration( ObjectProperty( :hasAncestor ) )
+TransitiveObjectProperty( :hasAncestor )
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140158> :Person "![X]: (person(X) => (?[Y,Z]: (person(Y) & person(Z) & hasAncestor(X,Y) & hasAncestor(X,Z) & Y != Z)))")
+ClassAssertion( :Person :Mary )
+)

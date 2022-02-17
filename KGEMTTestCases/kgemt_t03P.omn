@@ -1,0 +1,30 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+    
+    
+AnnotationProperty: :tptp_annotation
+
+    
+ObjectProperty: :part_of
+
+    Annotations:
+        :tptp_annotation "![X, Y]: ((part_of(X,Y) & part_of(Y,X)) => X = Y)"
+    
+
+Individual: :Magdeburg_University
+
+    Types:
+        :part_of value :OVGU
+    
+    
+Individual: :OVGU
+
+    Types:
+        :part_of value :Magdeburg_University
+    
+    

@@ -1,0 +1,6 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :John ) )
+Declaration( Class( :LegitimateChild ) )
+ClassAssertion( :LegitimateChild :John )
+)

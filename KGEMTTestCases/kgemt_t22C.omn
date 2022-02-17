@@ -1,0 +1,25 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :part_of
+
+
+ObjectProperty: :indiscernible_from
+
+
+Individual: :magdeburg_university
+
+    Types:
+        :indiscernible_from value :ovgu
+
+
+Individual: :ovgu
