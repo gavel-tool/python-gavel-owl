@@ -178,7 +178,7 @@ public class OntologyTranslator {
                     new UnaryConnective(0),
                     df.getOWLNothing().accept(new OWLClassExpressionTranslator(x))
                 )
-            ), "background axiom: owl:Thing has no instances"));
+            ), "background axiom: owl:Nothing has no instances"));
 
         // all pairs of things are connected via owl:topObjectProperty
         if (topObject)

@@ -120,6 +120,11 @@ def get_symbols(formula_list):
 
 class AnnotatedOWLParser(base_parser.StringBasedParser):
 
+    def __init__(self):
+        # only needed for creating a DOL file
+        self.ontology_iri = None
+        self.name_mapping = None
+
     def parse(self, ontology: Parseable, *args, **kwargs) -> Iterable[Target]:
         raise NotImplementedError
 
@@ -127,12 +132,19 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
         jp = int(kwargs["jp"][0]) if "jp" in kwargs else 25333
         pp = int(kwargs["pp"][0]) if "pp" in kwargs else 25334
         verbose = True if "verbose" in kwargs else False
+        use_readable_names = True if "readable-names" in kwargs else False
+        save_dol = True if "save-dol" in kwargs else False
         clif_properties = kwargs["clif-properties"] if "clif-properties" in kwargs else None
         tptp_properties = kwargs["tptp-properties"] if "tptp-properties" in kwargs else None
         ontology_handler = OntologyHandler(ontology_path, jp, pp, verbose, tptp_properties,
-                                           clif_properties)
+                                           clif_properties, use_readable_names, save_dol)
 
-        return ontology_handler.build_combined_theory()
+        problem, self.ontology_iri, self.name_mapping = ontology_handler.build_combined_theory()
+
+        print(self.ontology_iri)
+        print(self.name_mapping)
+
+        return problem
 
 
 def build_annotated_formulas(formulas, original_annotations):
@@ -154,8 +166,10 @@ def build_annotated_formulas(formulas, original_annotations):
 class OntologyHandler:
 
     def __init__(self, ontology, jp=25333, pp=25334, verbose=True, tptp_annotation_properties=None,
-                 clif_annotation_properties=None):
+                 clif_annotation_properties=None, use_readable_names=False, save_dol=False):
 
+        self.translation_mapping = None
+        self.save_dol = save_dol
         if not os.path.isabs(ontology):
             ontology = os.path.abspath(ontology)
         self.ontology_path = ontology
@@ -168,6 +182,7 @@ class OntologyHandler:
         if clif_annotation_properties is None:
             clif_annotation_properties = ["http://example.org/clif_annotation"]
         self.clif_annotation_properties = clif_annotation_properties
+        self.use_readable_names = use_readable_names
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(self.jp)),
                                    callback_server_parameters=CallbackServerParameters(port=int(self.pp)))
@@ -202,23 +217,34 @@ class OntologyHandler:
 
         return tptp_annotations, clif_annotations
 
-    # returns a list of iri-matches for all used symbols
+    # returns a list of name-matches (iris or readable names) for all used symbols
     def build_name_mapping(self, symbol_list):
-        symbol_iri_dict = {}
+        symbol_name_dict = {}
         for s in symbol_list:
             iri = self.app.getIRIMatch(self.ontology_path, s)
             if iri is None:
                 continue
-            symbol_iri_dict[s] = iri
+            if self.use_readable_names:
+                readable_name = self.app.getReadableName(self.ontology_path, iri)
+                if readable_name != "":
+                    iri = readable_name
+
+            symbol_name_dict[s] = iri
             # for line in self.java_subprocess.stdout:
             #    print(line)
 
         self.gateway.shutdown_callback_server()
 
-        return symbol_iri_dict
+        return symbol_name_dict
+
+    def check_owl_entails(self, conjecture_path):
+        if not os.path.isabs(conjecture_path):
+            conjecture_path = os.path.abspath(conjecture_path)
+        return self.app.owlOntologyEntails(self.ontology_path, conjecture_path)
+
 
     # returns a Gavel problem consisting of the translation of the OWL ontology and the FOL annotations
-    def build_combined_theory(self, dol_export=None):
+    def build_combined_theory(self):
         start = time.time()
 
         self.get_annotation_properties()
@@ -250,16 +276,16 @@ class OntologyHandler:
             print(f'Symbols time: {time.time() - start}')
             start = time.time()
 
-        symbol_iri_dict = self.build_name_mapping(symbols)
+        symbol_name_dict = self.build_name_mapping(symbols)
         if self.verbose:
-            print(f'Dict: {symbol_iri_dict}')
+            print(f'Dict: {symbol_name_dict}')
             print(f'Dict time: {time.time() - start}')
             start = time.time()
 
-        formulas_using_iris = apply_mapping(parsed_formulas, symbol_iri_dict)
+        formulas_using_iris = apply_mapping(parsed_formulas, symbol_name_dict)
         annot_tptp_lines = build_annotated_formulas(formulas_using_iris, clif_annot + tptp_annot)
         if self.verbose:
-            print(f'Formulas with IRIs:')
+            print(f'Formulas with resolved names:')
             for f in annot_tptp_lines:
                 print(f)
 
@@ -269,7 +295,14 @@ class OntologyHandler:
         self.gateway.shutdown_callback_server()
 
         from gavel_owl.dialects.owl.parser import OWLParser
-        owl_translation = OWLParser().parse_from_file(self.ontology_path)
+
+        kwargs = {}
+        if self.use_readable_names:
+            kwargs['readable-names'] = []
+
+        owl_translation_parser = OWLParser()
+        owl_translation = owl_translation_parser.parse_from_file(self.ontology_path, **kwargs)
+
         if self.verbose:
             counter = len(owl_translation.premises)
             if counter < 20:
@@ -283,4 +316,11 @@ class OntologyHandler:
 
             print(f'Translation time: {time.time() - start}')
 
-        return problem.Problem(annot_tptp_lines + owl_translation.premises, [])
+        if self.save_dol:
+            ontology_iri = self.app.getOntologyIri(self.ontology_path)
+            translation_mapping = owl_translation_parser.get_name_mapping()
+
+            return problem.Problem(annot_tptp_lines + owl_translation.premises, []), ontology_iri, translation_mapping
+
+        return problem.Problem(annot_tptp_lines + owl_translation.premises, []), None, None
+

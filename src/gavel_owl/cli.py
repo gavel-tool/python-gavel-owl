@@ -25,8 +25,8 @@ from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerPara
 import os
 from gavel_owl import package_directory
 
-from src.gavel_owl.dialects.annotated_owl.macleod_clif_parser import parse_string
-from src.gavel_owl.dialects.annotated_owl.parser import AnnotatedOWLParser
+from src.gavel_owl.dialects.annotated_owl.ontology_inference import \
+    prove_ontology_entailment as annot_owl_prove_entailment
 
 
 @click.group()
@@ -119,38 +119,46 @@ def check_consistency(ontology, jp, pp):
     gateway.shutdown_callback_server()
 
 
-#@click.command(name='translate2', context_settings=dict(
-#    ignore_unknown_options=True,
-#    allow_extra_args=True,
-#))
-#@click.argument("path")
-#@click.option("--save", metavar="SAVE_PATH", default="", help="If set, saves the translation to SAVE_PATH")
-#@click.pass_context
-def translate_annotated_owl_tptp(path, save):
-    """
-    Translates the file at PATH from the dialect specified by FRM to the dialect TO. You can get a list of all available dialects via the `dialects` command.
-    Example usage:
-        python -m gavel translate --save=my-output.p tptp tptp my-input-file.tptp
-        This will parse a given TPTP-file into gavels internal logic and save a new equivalent TPTP theory in my-output.p.
-    """
-    output_dialect = dialect.get_dialect('tptp')
+@click.command(name="prove-ontology-entailment", context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
+@click.argument("premise_ontology_path")
+@click.argument("conjecture_ontology_path")
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+@click.option("--verbose", "-v", is_flag=True, default=False)
+@click.pass_context
+def prove_ontology_entailment(ctx, premise_ontology_path, conjecture_ontology_path, jp, pp, verbose):
+    """check if an OWL ontology (annotated with FOL axioms) follows from another (annotated) OWL ontology"""
 
-    parser = AnnotatedOWLParser()
-    compiler = output_dialect._compiler_cls(shorten_names=True)
-    # if the parameter save is specified, the translation gets saved as a file with that name
-    if save != "":
-        with open(str(save), 'w') as file:
-            file.write(compiler.visit(parser.parse_from_file(path)))
-    else:
-        print(compiler.visit(parser.parse_from_file(path)))
+    index = 0
+    kwargs = {}
+    while index < len(ctx.args):
+        if ctx.args[index].startswith('-'):
+            command = ctx.args[index].strip('-')
+            values = []
+            index += 1
+            while index < len(ctx.args) and not ctx.args[index].startswith('-'):
+                values.append(ctx.args[index])
+                index += 1
 
+            kwargs[command] = values
+        else:
+            index += 1
 
-if __name__ == '__main__':
-    print(parse_string('(forall (a b) (if (precedes a b) (not (precedes b a))))')[0])
-    translate_annotated_owl_tptp('../../ba_architecture_example.omn', 'ba_architecture_example_tptp.p')
+    owl_inference, tptp_inference = annot_owl_prove_entailment(premise_ontology_path, conjecture_ontology_path, jp, pp,
+                                                               verbose, **kwargs)
+    entails = "entails"
+    doesnotentail = "does not entail"
+    print(
+        f'Based on OWL, {premise_ontology_path} {entails if owl_inference else doesnotentail} {conjecture_ontology_path}')
+    print(f'Based on OWL with FOL annotations, {premise_ontology_path} {entails if tptp_inference else doesnotentail} '
+          f'{conjecture_ontology_path}')
+
 
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
-#owl.add_command(translate_annotated_owl_tptp)
+owl.add_command(prove_ontology_entailment)
