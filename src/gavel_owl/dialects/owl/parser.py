@@ -13,11 +13,6 @@ class OWLParser(parser.StringBasedParser):
         self.file_path = None
         self.app = None
         self.use_readable_names = None
-        # maps names used in Gavel theory to OWL-IRIs
-        self.name_mapping = {}
-
-    def get_name_mapping(self):
-        return self.name_mapping
 
     def parseJavaToPython(self, node):
         if node.getVisitName() == "quantified_formula":
@@ -53,14 +48,13 @@ class OWLParser(parser.StringBasedParser):
             return logic.Type(node.getName())
 
     def resolve_name(self, name):
+        readable_name = name
         if self.use_readable_names:
             readable_name = self.app.getReadableName(self.file_path, name)
-            if readable_name is not None:
-                self.name_mapping[readable_name] = name
-                return readable_name
+            if readable_name is None:
+                readable_name = name
 
-        self.name_mapping[name] = name
-        return name
+        return readable_name
 
     def parse_from_file(self, file_path, *args, **kwargs):
         jp = int(kwargs["jp"][0]) if "jp" in kwargs else 25333

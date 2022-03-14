@@ -7,6 +7,7 @@ import fol.*;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.FunctionalSyntaxDocumentFormat;
+import org.semanticweb.owlapi.formats.ManchesterSyntaxDocumentFormat;
 import org.semanticweb.owlapi.metrics.DLExpressivity;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -14,7 +15,6 @@ import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.ShortFormFromRDFSLabelAxiomListProvider;
-import org.semanticweb.owlapi.vocab.OWLFacet;
 import py4j.GatewayServer;
 import py4j.Py4JNetworkException;
 
@@ -29,11 +29,9 @@ import static java.lang.Integer.parseInt;
 
 public class ApiServer {
 
-    public static final boolean USE_FULL_IRI = false;
-    public static final int MAX_LEV_DIST = 5;
-
     public HashMap<String, HashMap<String, String>> labelToIRIMapping = new HashMap<>();
     public HashMap<String, HashMap<String, String>> iriToReadableMapping = new HashMap<>();
+    public HashMap<String, Map<String, String>> iriToCurieMapping = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         //arg0 is the java port, arg1 the python port
@@ -41,6 +39,12 @@ public class ApiServer {
             //bfoFetchClifAnnotations();
             //bfoWriteClifAnnotations();
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+            //app.addClassInstantiationToOntology("../oeo-annot-bfo.omn", "../oeo-annot-bfo-class-instantiation.omn");
+            /*OWLOntologyManager m = OWLManager.createOWLOntologyManager();
+            OWLOntology ontology =
+                m.loadOntologyFromOntologyDocument(new File("../ba_architecture_example.omn"));
+            System.out.println(app.generateIRIToCurieMapping(ontology));
+
 
             /*OWLOntologyManager m = OWLManager.createOWLOntologyManager();
             OWLOntology ontology =
@@ -72,6 +76,23 @@ public class ApiServer {
 
         }
 
+    }
+
+    public void addClassInstantiationToOntology(String inputPath, String outputPath)
+        throws OWLOntologyCreationException, FileNotFoundException, OWLOntologyStorageException {
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+        OWLOntology ontology = man.loadOntologyFromOntologyDocument(new File(inputPath));
+        OWLDataFactory df = man.getOWLDataFactory();
+
+        int index = 0;
+        for (OWLEntity owlClass : ontology.signature().filter(AsOWLClass::isOWLClass).collect(Collectors.toList())) {
+            OWLNamedIndividual ind = df.getOWLNamedIndividual("http://www.example.org/",
+                "ind_" + index++);
+            OWLAxiom declAxiom = df.getOWLDeclarationAxiom(ind);
+            OWLAxiom classAssertAxiom = df.getOWLClassAssertionAxiom((OWLClassExpression) owlClass, ind);
+            ontology.add(declAxiom, classAssertAxiom);
+        }
+        ontology.saveOntology(new FileOutputStream(outputPath));
     }
 
     public static void bfoFetchClifAnnotations() throws OWLOntologyCreationException, IOException {
@@ -317,7 +338,6 @@ public class ApiServer {
     }
 
     private HashMap<String, String> getLabelToIRIMapping(OWLOntology ontology) {
-        ontology.signature(Imports.INCLUDED).forEach(HasIRI::getIRI);
         ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
             new ArrayList<>(),
             ontology.axioms(Imports.INCLUDED).collect(Collectors.toList()));
@@ -351,14 +371,10 @@ public class ApiServer {
     }
 
     // returns the (most likely) match for a given symbol
+    // check 3 things for each entity: IRI, label, identifier (i.e., suffix of IRI)
+    // if one of them matches symbol exactly, return it,
+    // else look for match with Levenshtein distance < 1 (if symbol.length < 8) or < 2 (else)
     public String getIRIMatch(String ontologyPath, String symbol) throws Exception {
-        // check if symbol is a valid IRI
-        // use URL pattern according to (RFC2396)
-        // https://stackoverflow.com/a/13958706
-        //String urlPattern = "/^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?/";
-        //if (symbol.matches(urlPattern)) {
-        //    return "IRI__" + symbol;
-        //}
         if (labelToIRIMapping.get(ontologyPath) == null) {
             labelToIRIMapping.put(ontologyPath, getLabelToIRIMapping(OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(new File(ontologyPath))));
@@ -376,43 +392,52 @@ public class ApiServer {
         if (ontologyLabelMapping.containsValue(symbol)) {
             return symbol;
         }
+
         // use set of all labels and IRIs
         String[] labels = ontologyLabelMapping.keySet().toArray(new String[0]);
         String[] iris = ontologyLabelMapping.values().toArray(new String[0]);
+
+        // exact match with identifiers
+        for (String iri : iris) {
+            if (iri.endsWith(symbol)) {
+                return iri;
+            }
+        }
         // find most similar match if exact match doesn't exists
-        int lowest_lev_dist = MAX_LEV_DIST;
+        int max_dist = symbol.length() < 8 ? 1 : 2;
         ArrayList<String> bestMatches = new ArrayList<>();
         for (int i = 0; i < labels.length + iris.length; i++) {
             // iterate through labels and iris
-            String match = i < labels.length ? labels[i] : iris[i-labels.length];
+            String match = i < labels.length ? labels[i] : iris[i - labels.length];
             // sort out very too apart labels
-            if (Math.abs(match.length() - symbol.length()) > lowest_lev_dist) {
+            if (Math.abs(match.length() - symbol.length()) > max_dist && i >= labels.length) {
                 continue;
             }
             //System.out.println(labels[i]);
-            int lev_dist = levDist(match, symbol);
+            // use suffixes of iris
+            int lev_dist = levDist(i >= labels.length ? match.substring(match.length() - symbol.length()) : match, symbol);
             //System.out.println("Distance between " + labels[i] + " and " + symbol + ": " + lev_dist);
-            if (lev_dist < lowest_lev_dist) {
-                lowest_lev_dist = lev_dist;
+            if (lev_dist < max_dist) {
+                max_dist = lev_dist;
                 bestMatches.clear();
                 bestMatches.add(i < labels.length ? ontologyLabelMapping.get(match) : match);
-            } else if (lev_dist == lowest_lev_dist) {
+            } else if (lev_dist == max_dist) {
                 bestMatches.add(i < labels.length ? ontologyLabelMapping.get(match) : match);
             }
         }
 
         if (bestMatches.isEmpty()) {
-            System.out.println("No match found for " + symbol + " with a distance <= " + MAX_LEV_DIST);
+            System.out.println("No match found for " + symbol + " with a distance <= " + max_dist);
             return null;
         }
 
         if (bestMatches.size() > 1) {
             System.out.println("No perfect match found for " + symbol + ". The closest labels are " + bestMatches
-                + "  (distance: " + lowest_lev_dist + "). " + bestMatches.get(0) + " was chosen.");
+                + "  (distance: " + max_dist + "). " + bestMatches.get(0) + " was chosen.");
         }
         else {
             System.out.println("No perfect match found for " + symbol + ". The closest label is " + bestMatches.get(0)
-                + " (distance: " + lowest_lev_dist + ")");
+                + " (distance: " + max_dist + ")");
         }
 
         return bestMatches.get(0);
@@ -430,20 +455,13 @@ public class ApiServer {
      * for every IRI in the ontology: map to label; if no label exists, use identifier, if multiple labels have the
      * same value, use identifier and label
      */
-    private HashMap<String, String> getIRItoReadableNameMapping(OWLOntology ontology) {
+    private HashMap<String, String> generateIRItoReadableNameMapping(OWLOntology ontology) {
         ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
             new ArrayList<>(),
             ontology.axioms(Imports.INCLUDED).collect(Collectors.toList()));
         HashMap<String, String> mapping = new HashMap<>();
-        // special cases: owl:Thing, rdfs:literal and facets may appear in the translation, but not in the ontology
-        OWLDataFactory df = OWLManager.getOWLDataFactory();
-        mapping.put(df.getOWLThing().toStringID(), "owl:Thing");
-        mapping.put(df.getTopDatatype().toStringID(), "rdfs:literal");
-        for (IRI facet : OWLFacet.getFacetIRIs()) {
-            mapping.put(facet.toString(), facet.getShortForm());
-        }
 
-            for (OWLEntity entity : ontology.signature(Imports.INCLUDED).collect(Collectors.toList())) {
+        for (OWLEntity entity : ontology.signature(Imports.INCLUDED).collect(Collectors.toList())) {
             String iri = entity.toStringID();
             String label = labelProvider.getShortForm(entity);
             // use identifier if no label exists
@@ -453,7 +471,7 @@ public class ApiServer {
             if (!mapping.containsValue(label)) {
                 mapping.put(iri, label);
             } else {
-                // find entry with same label, replace label with identifier + __ + label
+                // find entry with same label, replace label with identifier + label
                 for (Map.Entry<String, String> entry : mapping.entrySet()) {
                     if (entry.getValue().equals(label)) {
                         entry.setValue(entry.getValue() + " (" + this.shortenName(entry.getKey()) + ")");
@@ -465,9 +483,17 @@ public class ApiServer {
         return mapping;
     }
 
+    public HashMap<String, String> getReadableNameMapping(String ontologyPath) throws OWLOntologyCreationException {
+        if (iriToReadableMapping.get(ontologyPath) == null) {
+            iriToReadableMapping.put(ontologyPath, generateIRItoReadableNameMapping(OWLManager.createOWLOntologyManager()
+                .loadOntologyFromOntologyDocument(new File(ontologyPath))));
+        }
+        return iriToReadableMapping.get(ontologyPath);
+    }
+
     public String getReadableName(String ontologyPath, String iri) throws OWLOntologyCreationException {
         if (iriToReadableMapping.get(ontologyPath) == null) {
-            iriToReadableMapping.put(ontologyPath, getIRItoReadableNameMapping(OWLManager.createOWLOntologyManager()
+            iriToReadableMapping.put(ontologyPath, generateIRItoReadableNameMapping(OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(new File(ontologyPath))));
         }
         return iriToReadableMapping.get(ontologyPath).get(iri);
@@ -493,6 +519,82 @@ public class ApiServer {
     public String getOntologyIri(String ontologyPath) throws OWLOntologyCreationException {
         return OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(new File(ontologyPath))
             .getOntologyID().getOntologyIRI().get().toString();
+    }
 
+    public String getDOLconformantOntology(String ontologyPath) throws OWLOntologyCreationException, OWLOntologyStorageException {
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(new File(ontologyPath));
+        OWLDocumentFormat outputSyntax = new ManchesterSyntaxDocumentFormat();
+
+        // hets needs explicitly typed literals, which are not supported by OWL API if the data type is rdf:PlainLiteral
+        // TODO: insert placeholder for each rdf:PlainLiteral literal without a language tag,
+        //  after rendering replace placeholder with tag
+        // TODO: find a method to filter the ontology for literals
+        if (ontology.getFormat() != null && ontology.getFormat().isPrefixOWLDocumentFormat()) {
+            outputSyntax.asPrefixOWLDocumentFormat().copyPrefixesFrom(ontology.getFormat().asPrefixOWLDocumentFormat());
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ontology.saveOntology(outputSyntax, outputStream);
+
+        return outputStream.toString();
+    }
+
+    private Map<String, String> generateIRIToCurieMapping(OWLOntology ontology) throws OWLOntologyCreationException, OWLOntologyStorageException {
+
+        /*DefaultPrefixManager pm = new DefaultPrefixManager(null, null, ontology.getOntologyID().getOntologyIRI().get().toString());
+        pm.prefixNames().forEach(name -> pm.setPrefix(name, ""));
+
+        System.out.println(pm.getDefaultPrefix());
+        System.out.println(pm.getPrefixName2PrefixMap());
+        ontology.signature().forEach(entity -> System.out.println(pm.getPrefixIRI(entity.getIRI())));
+        OWLDocumentFormat outputSyntax = new ManchesterSyntaxDocumentFormat();
+        outputSyntax.asPrefixOWLDocumentFormat().clear();
+        outputSyntax.asPrefixOWLDocumentFormat().setPrefixManager(pm);
+        System.out.println("--");
+        outputSyntax.asPrefixOWLDocumentFormat().prefixNames().forEach(System.out::println);
+        System.out.println("---");
+        System.out.println(outputSyntax.isAddMissingTypes());
+        outputSyntax.setAddMissingTypes(true);
+
+        ontology.getFormat().asPrefixOWLDocumentFormat().clear();
+        OWLDocumentFormat manSyn = new ManchesterSyntaxDocumentFormat();
+        System.out.println(manSyn.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap());
+        manSyn.asPrefixOWLDocumentFormat().copyPrefixesFrom(ontology.getFormat().asPrefixOWLDocumentFormat());
+        manSyn.asPrefixOWLDocumentFormat().clear();
+        System.out.println(manSyn.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap());
+        ontology.saveOntology(System.out);
+        */
+        Map<String, String> iriToCurieMap = new HashMap<>();
+
+        Set<Map.Entry<String, String>> prefixNameToPrefix = ontology.getFormat().asPrefixOWLDocumentFormat().getPrefixName2PrefixMap().entrySet();
+        List<OWLEntity> entities = ontology.signature().collect(Collectors.toList());
+        for (OWLEntity entity : entities) {
+            for (Map.Entry<String, String> entry : prefixNameToPrefix) {
+                if (entry.getValue().equals(entity.getIRI().getNamespace())) {
+                    // special case: for empty prefix, remainder without ":" is used
+                    if (entry.getKey().equals(":")) {
+                        iriToCurieMap.put(entity.getIRI().toString(), entity.getIRI().getRemainder().orElse(""));
+                    } else {
+                        iriToCurieMap.put(entity.getIRI().toString(), entry.getKey() + entity.getIRI().getRemainder().orElse(""));
+                    }
+                }
+            }
+        }
+        return iriToCurieMap;
+    }
+
+    public Map<String, String> getIRIToCurieMapping(String ontologyPath) throws OWLOntologyCreationException, OWLOntologyStorageException {
+        if (iriToCurieMapping.get(ontologyPath) == null) {
+            iriToCurieMapping.put(ontologyPath, generateIRIToCurieMapping(OWLManager.createOWLOntologyManager()
+                .loadOntologyFromOntologyDocument(new File(ontologyPath))));
+        }
+        return iriToCurieMapping.get(ontologyPath);
+    }
+
+    public String getCurie(String ontologyPath, String iri) throws OWLOntologyCreationException, OWLOntologyStorageException {
+        if (iriToCurieMapping.get(ontologyPath) == null) {
+            iriToCurieMapping.put(ontologyPath, generateIRIToCurieMapping(OWLManager.createOWLOntologyManager()
+                .loadOntologyFromOntologyDocument(new File(ontologyPath))));
+        }
+        return iriToCurieMapping.get(ontologyPath).get(iri);
     }
 }

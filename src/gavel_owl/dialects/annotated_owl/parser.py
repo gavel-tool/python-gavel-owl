@@ -122,7 +122,7 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
 
     def __init__(self):
         # only needed for creating a DOL file
-        self.ontology_iri = None
+        self.ontology_text_dol = None
         self.name_mapping = None
 
     def parse(self, ontology: Parseable, *args, **kwargs) -> Iterable[Target]:
@@ -139,12 +139,9 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
         ontology_handler = OntologyHandler(ontology_path, jp, pp, verbose, tptp_properties,
                                            clif_properties, use_readable_names, save_dol)
 
-        problem, self.ontology_iri, self.name_mapping = ontology_handler.build_combined_theory()
+        gavel_problem, self.ontology_text_dol, self.name_mapping = ontology_handler.build_combined_theory()
 
-        print(self.ontology_iri)
-        print(self.name_mapping)
-
-        return problem
+        return gavel_problem
 
 
 def build_annotated_formulas(formulas, original_annotations):
@@ -242,7 +239,6 @@ class OntologyHandler:
             conjecture_path = os.path.abspath(conjecture_path)
         return self.app.owlOntologyEntails(self.ontology_path, conjecture_path)
 
-
     # returns a Gavel problem consisting of the translation of the OWL ontology and the FOL annotations
     def build_combined_theory(self):
         start = time.time()
@@ -317,10 +313,23 @@ class OntologyHandler:
             print(f'Translation time: {time.time() - start}')
 
         if self.save_dol:
-            ontology_iri = self.app.getOntologyIri(self.ontology_path)
-            translation_mapping = owl_translation_parser.get_name_mapping()
+            ontology_text_dol = self.app.getDOLconformantOntology(self.ontology_path)
+            iriToReadableMapping = self.app.getReadableNameMapping(self.ontology_path)
+            iriToCurieMapping = self.app.getIRIToCurieMapping(self.ontology_path)
 
-            return problem.Problem(annot_tptp_lines + owl_translation.premises, []), ontology_iri, translation_mapping
+            gavel_name_to_owl_name_mapping = {}
+            if self.use_readable_names:
+                for key in iriToReadableMapping:
+                    if key in iriToCurieMapping:
+                        gavel_name_to_owl_name_mapping[iriToReadableMapping[key]] = iriToCurieMapping[key]
+                    else:
+                        # IRIs need to be put in < >
+                        gavel_name_to_owl_name_mapping[iriToReadableMapping[key]] = '<' + key + '>'
+            else:
+                for key in iriToCurieMapping:
+                    gavel_name_to_owl_name_mapping[key] = iriToCurieMapping[key]
+
+            return problem.Problem(annot_tptp_lines + owl_translation.premises, []), \
+                   ontology_text_dol, gavel_name_to_owl_name_mapping
 
         return problem.Problem(annot_tptp_lines + owl_translation.premises, []), None, None
-

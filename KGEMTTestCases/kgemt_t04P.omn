@@ -1,37 +1,20 @@
 Prefix: : <http://example.org/>
 
-
 Ontology: <http://example.org>
 
+AnnotationProperty: clif_annotation
+AnnotationProperty: tptp_annotation
 
-AnnotationProperty: :clif_annotation
-
-
-AnnotationProperty: :tptp_annotation
-
-
-Class: :ovgu_part
-
+Class: ovgu_part
     EquivalentTo:
-        :part_of value :ovgu
-
+        part_of value ovgu
     SubclassOf:
-        :overlap value :magdeburg
+        overlap value magdeburg
 
-
-ObjectProperty: :overlap
-
-
-ObjectProperty: :part_of
-
+ObjectProperty: overlap
+ObjectProperty: part_of
     Annotations:
-        :tptp_annotation "![X, Y]: (~part_of(Y, X) => ?[Z]: (part_of(Z, Y) & ~overlap(Z, X)))"
+        tptp_annotation "![X, Y]: (~part_of(Y, X) => ?[Z]: (part_of(Z, Y) & ~overlap(Z, X)))"
 
-
-Individual: :ovgu
-
-
-Individual: :magdeburg
-
-
-
+Individual: ovgu
+Individual: magdeburg
