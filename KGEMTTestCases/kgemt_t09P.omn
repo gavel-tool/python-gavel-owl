@@ -1,0 +1,43 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+Class: :connection_to_magdeburg
+
+    EquivalentTo:
+        :connection value :magdeburg
+
+
+Class: :connection_to_ovgu
+
+    EquivalentTo:
+        :connection value :ovgu
+
+    SubclassOf:
+        :connection_to_magdeburg
+
+
+ObjectProperty: :enclosure
+
+    Annotations:
+        :tptp_annotation "![X, Y]: (enclosure(X, Y) <=> ![Z]: (connection(Z, X) => connection(Z, Y)))"
+
+
+ObjectProperty: :connection
+
+
+Individual: :ovgu
+
+
+Individual: :magdeburg
+
+
+

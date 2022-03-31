@@ -1,0 +1,17 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( NamedIndividual( :Susan ) )
+Declaration( NamedIndividual( :Jim ) )
+Declaration( NamedIndividual( :James ) )
+Declaration( ObjectProperty( :hasMother ) )
+Declaration( ObjectProperty( :hasFather ) )
+Declaration( ObjectProperty( :hasMaternalGrandfather ) )
+SubObjectPropertyOf(
+ObjectPropertyChain( :hasMother :hasFather )
+:hasMaternalGrandfather )
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140158> :hasMaternalGrandfather "![X,Y,Z]: ((hasMaternalGrandfather(X,Y) & hasMaternalGrandfather(X,Z)) => (Y = Z))")
+ObjectPropertyAssertion( :hasMother :Mary :Susan )
+ObjectPropertyAssertion( :hasFather :Susan :Jim )
+ObjectPropertyAssertion( :hasFather :Susan :James )
+)

@@ -1,0 +1,36 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :proper_part_of
+
+
+ObjectProperty: :interior_proper_part_of
+
+
+ObjectProperty: :connected_to
+
+
+ObjectProperty: :overlap
+
+
+Individual: :magdeburg
+
+
+Individual: :ovgu
+
+    Types:
+        :interior_proper_part_of value :magdeburg
+
+Individual: :buckau
+
+
+Individual: :alte_neustadt

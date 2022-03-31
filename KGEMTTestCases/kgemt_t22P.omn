@@ -1,0 +1,31 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :part_of
+
+
+ObjectProperty: :indiscernible_from
+
+    Annotations:
+        :tptp_annotation "![X, Y]: (indiscernible_from(X, Y) <=> (part_of(X, Y) & part_of(Y, X)))"
+
+
+Individual: :magdeburg_university
+
+    Types:
+        :part_of value :ovgu
+
+
+Individual: :ovgu
+
+    Types:
+        :part_of value :magdeburg_university

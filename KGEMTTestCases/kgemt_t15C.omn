@@ -1,0 +1,25 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+AnnotationProperty: :closure
+
+
+Individual: :magdeburg
+
+
+Individual: :closure_magdeburg
+
+    SameAs:
+        :closure_closure_magdeburg
+
+
+Individual: :closure_closure_magdeburg

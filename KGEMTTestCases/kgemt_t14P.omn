@@ -1,0 +1,31 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :closure
+
+    Characteristics:
+        Functional
+
+
+ObjectProperty: :part_of
+
+    Annotations:
+            :tptp_annotation "![X, Y]: (closure(X, Y) => part_of(X, Y))"
+
+
+Individual: :magdeburg
+
+    Types:
+        :closure value :closure_magdeburg
+
+
+Individual: :closure_magdeburg

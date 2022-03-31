@@ -1,0 +1,26 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+AnnotationProperty: :closure
+
+
+ObjectProperty: :part_of
+
+
+Individual: :magdeburg
+
+    Types:
+        :part_of value :closure_magdeburg
+
+
+Individual: :closure_magdeburg
+

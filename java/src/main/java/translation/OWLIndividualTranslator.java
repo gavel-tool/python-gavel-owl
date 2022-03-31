@@ -14,7 +14,7 @@ public class OWLIndividualTranslator extends OWLTranslator implements OWLIndivid
     //Anonymous Individual
     @Override
     public Variable visit(@Nonnull OWLAnonymousIndividual individual) {
-        return new Variable(getEntityName(individual));
+        return new Variable('X' + getEntityName(individual));
     }
 
     //Named Individual

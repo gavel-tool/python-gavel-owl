@@ -21,10 +21,13 @@ import gavel.dialects.base.dialect as dialect
 import gavel.logic.problem as problem
 import gavel.prover as prover
 import click
-import time
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 import os
 from gavel_owl import package_directory
+
+from src.gavel_owl.dialects.annotated_owl.ontology_inference import \
+    prove_ontology_entailment as annot_owl_prove_entailment
+
 
 @click.group()
 def owl():
@@ -36,8 +39,8 @@ def owl():
 @click.option("-pp", default="25334", help="Python Port number")
 def start_server(jp, pp):
     """Start a server listening to ports `jp` and `pp`"""
-    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', os.path.join(package_directory, 'jars', 'api.jar'), jp, pp], stdout=subprocess.PIPE,#
-                         stderr=subprocess.STDOUT, universal_newlines=True)
+    p = subprocess.Popen(['java', '-Xmx2048m', '-jar', os.path.join(package_directory, 'jars', 'api.jar'), jp, pp],
+                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 
     for line in p.stdout:
         if "JarClassLoader: Warning:" not in str(line):
@@ -56,7 +59,7 @@ def stop_server(pp, jp):
     gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                           callback_server_parameters=CallbackServerParameters(port=int(pp)))
     gateway.shutdown()
-    print("Server stopped")
+    print(f'Server stopped (jp: {jp}, pp: {pp})')
 
 
 @click.command()
@@ -83,11 +86,11 @@ def owl_prove(file, conjectures, steps, pp, jp):
     print("")
     # prove using the vampire prover
     print("Conjectures:")
-    VampProver = prover.registry.get_prover("vampire")()
+    vampire = prover.registry.get_prover("vampire")()
     for conj in tptp_problem.conjectures:
         print(tptp_compiler.visit(conj))
         combined_problem = problem.Problem(premises=owl_problem.premises, conjectures=[conj])
-        fol_proof = VampProver.prove(problem=combined_problem)
+        fol_proof = vampire.prove(problem=combined_problem)
         print(fol_proof.status._name + ": " + fol_proof.status._description)
         if steps:
             print("")
@@ -101,10 +104,8 @@ def owl_prove(file, conjectures, steps, pp, jp):
 @click.option("-jp", default="25333", help="Java Port number")
 @click.option("-pp", default="25334", help="Python Port number")
 def check_consistency(ontology, jp, pp):
-    """Check if an ontology is consistent"""
+    """Check if an OWL ontology is consistent"""
 
-    with open(ontology, "r") as finp:
-        ontology = finp.read()
     gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(jp)),
                           callback_server_parameters=CallbackServerParameters(port=int(pp)))
     # create entry point
@@ -117,7 +118,47 @@ def check_consistency(ontology, jp, pp):
 
     gateway.shutdown_callback_server()
 
+
+@click.command(name="prove-ontology-entailment", context_settings=dict(
+    ignore_unknown_options=True,
+    allow_extra_args=True,
+))
+@click.argument("premise_ontology_path")
+@click.argument("conjecture_ontology_path")
+@click.option("-jp", default="25333", help="Java Port number")
+@click.option("-pp", default="25334", help="Python Port number")
+@click.option("--verbose", "-v", is_flag=True, default=False)
+@click.pass_context
+def prove_ontology_entailment(ctx, premise_ontology_path, conjecture_ontology_path, jp, pp, verbose):
+    """check if an OWL ontology (annotated with FOL axioms) follows from another (annotated) OWL ontology"""
+
+    index = 0
+    kwargs = {}
+    while index < len(ctx.args):
+        if ctx.args[index].startswith('-'):
+            command = ctx.args[index].strip('-')
+            values = []
+            index += 1
+            while index < len(ctx.args) and not ctx.args[index].startswith('-'):
+                values.append(ctx.args[index])
+                index += 1
+
+            kwargs[command] = values
+        else:
+            index += 1
+
+    owl_inference, tptp_inference = annot_owl_prove_entailment(premise_ontology_path, conjecture_ontology_path, jp, pp,
+                                                               verbose, **kwargs)
+    entails = "entails"
+    doesnotentail = "does not entail"
+    print(
+        f'Based on OWL, {premise_ontology_path} {entails if owl_inference else doesnotentail} {conjecture_ontology_path}')
+    print(f'Based on OWL with FOL annotations, {premise_ontology_path} {entails if tptp_inference else doesnotentail} '
+          f'{conjecture_ontology_path}')
+
+
 owl.add_command(start_server)
 owl.add_command(stop_server)
 owl.add_command(owl_prove)
 owl.add_command(check_consistency)
+owl.add_command(prove_ontology_entailment)

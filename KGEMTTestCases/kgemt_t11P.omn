@@ -1,0 +1,38 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+AnnotationProperty: :sum
+
+
+Class: :self_connected
+
+    Annotations:
+        :tptp_annotation "![X]: (self_connected(X) <=> ![Y, Z]: (X = sum(Y, Z) => connected_to(Y, Z)))"
+
+
+ObjectProperty: :connected_to
+
+
+Individual: :magdeburg
+
+    Annotations:
+        :tptp_annotation "magdeburg = sum(eastelbian_magdeburg, westelbian_magdeburg) & ~?[Y, Z]: ((Y != eastelbian_magdeburg | Z != westelbian_magdeburg) & magdeburg = sum(Y, Z))"
+
+
+Individual: :eastelbian_magdeburg
+
+    Types:
+        :connected_to value :westelbian_magdeburg
+
+
+Individual: :westelbian_magdeburg
+

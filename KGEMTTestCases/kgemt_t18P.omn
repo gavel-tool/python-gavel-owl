@@ -1,0 +1,46 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :exterior
+
+    Characteristics:
+        Functional
+
+
+ObjectProperty: :complement
+
+    Characteristics:
+        Functional
+
+
+ObjectProperty: :interior
+
+    Characteristics:
+        Functional
+
+    Annotations:
+            :tptp_annotation "![X, Y, Z]: (exterior(X, Y) <=> (complement(X, Z) => interior(Z,Y)))"
+
+
+Individual: :magdeburg
+
+
+Individual: :exterior_magdeburg
+
+    Types:
+        :exterior value :magdeburg
+
+
+Individual: :complement_magdeburg
+
+    Types:
+        :complement value :magdeburg

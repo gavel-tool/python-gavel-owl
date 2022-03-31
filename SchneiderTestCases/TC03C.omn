@@ -1,0 +1,9 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( NamedIndividual( :John ) )
+Declaration( ObjectProperty( :hasAncestor ) )
+Declaration( ObjectProperty( :hasDescendant ) )
+ObjectPropertyAssertion( :hasAncestor :Mary :John )
+NegativeObjectPropertyAssertion( :hasDescendant :Mary :John )
+)

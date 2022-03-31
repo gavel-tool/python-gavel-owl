@@ -1,0 +1,57 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+AnnotationProperty: :sum
+
+
+ObjectProperty: :closure
+
+    Characteristics:
+        Functional
+
+    Annotations:
+        :tptp_annotation "![X, Y, Z, W]: ((closure(X, Z) & closure(Y, W)) => closure(sum(X, Y), sum(Z, W)))"
+
+
+Individual: :magdeburg
+
+    Types:
+        :closure value :closure_magdeburg
+
+
+Individual: :halle
+
+    Types:
+        :closure value :closure_halle
+
+
+Individual: :closure_magdeburg
+
+
+Individual: :closure_halle
+
+
+Individual: :magdeburg_plus_halle
+
+    Types:
+        :closure value :closure_magdeburg_plus_halle
+
+    Annotations:
+        :tptp_annotation "magdeburg_plus_halle = sum(magdeburg, halle)"
+
+Individual: :closure_magdeburg_plus_closure_halle
+
+    Annotations:
+        :tptp_annotation "closure_magdeburg_plus_closure_halle = sum(closure_magdeburg, closure_halle)"
+
+
+Individual: :closure_magdeburg_plus_halle

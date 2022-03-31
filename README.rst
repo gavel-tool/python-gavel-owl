@@ -63,7 +63,7 @@ Installation
 Usage
 =====
 
-This plugin extends gavel by a new `owl` dialect. This enables the various
+This plugin extends gavel by two new dialects, `owl` and `annotated-owl`. This enables the various
 features of gavel to be used with owl ontologies. These functionalities use the
 java-based OWL-API. Therefore, you have to start the java backend in order to
 use most owl-based functionalities. The `gavel-owl` plugin provides a single
@@ -75,10 +75,14 @@ After the server has been started successfully, you can translate an existing
 owl ontology to first-order logic in tptp syntax using::
 
     python -m gavel translate owl tptp your-ontology.owl
-    
+
 You can also submit arguments to fist-order prover Vampire consisting of the translation of a given owl ontology as premises and conjectures formulated in tptp using::
 
     python -m gavel owl-prove your-premises.owl your-conjectures.tptp
+
+In order to translate an owl ontology with first-order annotation into tptp syntax, you can use
+
+    python -m gavel translate annotated-owl tptp your-ontology.owl
 
 The running java backend can be terminated::
 
@@ -99,6 +103,8 @@ There are several commands available that can be accessed via::
 - stop-server: Ends the Java connection established by start-server.
 
 - prove: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
+
+- prove-ontology-entailment: Checks if an OWL ontology can be entailed from another. It returns the result based on OWL reasoning and based on FOL reasoning using the annotated-owl translation.
 
 For further options use::
 

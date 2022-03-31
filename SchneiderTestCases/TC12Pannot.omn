@@ -1,0 +1,21 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( NamedIndividual( :Bill ) )
+Declaration( NamedIndividual( :John ) )
+Declaration( Class( :LegitimateChild ) )
+Declaration( ObjectProperty( :hasMother ) )
+Declaration( ObjectProperty( :hasFather ) )
+Declaration( ObjectProperty( :hasSpouse ) )
+Declaration( ObjectProperty( :z ) )
+SubObjectPropertyOf(
+ObjectPropertyChain(
+:hasMother
+:hasSpouse
+ObjectInverseOf( :hasFather ) )
+:z )
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140157> :LegitimateChild "(forall (x) (if (z x x) (LegitimateChild x)))")
+ObjectPropertyAssertion( :hasMother :John :Mary )
+ObjectPropertyAssertion( :hasFather :John :Bill )
+ObjectPropertyAssertion( :hasSpouse :Mary :Bill )
+)

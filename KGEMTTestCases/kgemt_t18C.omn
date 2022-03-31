@@ -1,0 +1,31 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+ObjectProperty: :exterior
+
+
+ObjectProperty: :complement
+
+
+ObjectProperty: :interior
+
+
+Individual: :magdeburg
+
+
+Individual: :exterior_magdeburg
+
+    Types:
+        :interior value :complement_magdeburg
+
+
+Individual: :complement_magdeburg

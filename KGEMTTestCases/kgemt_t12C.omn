@@ -1,0 +1,45 @@
+Prefix: : <http://example.org/>
+
+
+Ontology: <http://example.org>
+
+
+AnnotationProperty: :clif_annotation
+
+
+AnnotationProperty: :tptp_annotation
+
+
+Class: :self-connected
+
+
+ObjectProperty: :overlap
+
+
+ObjectProperty: :part_of
+
+
+ObjectProperty: :connection
+
+
+Individual: :magdeburg_altstadt
+
+    Types:
+        :connection value :magdeburg_werder
+
+
+Individual: :magdeburg_werder
+
+    Types:
+        :connection value :magdeburg_altstadt
+
+
+Individual: :strombruecke
+
+
+Individual: :strombruecke_western_pillar
+
+
+Individual: :strombruecke_eastern_pillar
+
+

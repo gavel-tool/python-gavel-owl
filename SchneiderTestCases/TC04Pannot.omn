@@ -1,0 +1,17 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( NamedIndividual( :Bill ) )
+Declaration( NamedIndividual( :John ) )
+Declaration( ObjectProperty( :hasUncle ) )
+Declaration( ObjectProperty( :hasParent ) )
+Declaration( ObjectProperty( :hasBrother ) )
+SubObjectPropertyOf(
+ObjectPropertyChain( :hasParent :hasBrother )
+:hasUncle )
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140157> :hasUncle "(forall (x y) (if (hasUncle x y) (not (or (hasParent x y) (hasBrother x y)))))")
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140157> :hasBrother "(forall (x y) (if (hasBrother x y) (not (or (hasParent x y) (hasUncle x y)))))")
+AnnotationAssertion(<http://openenergy-platform.org/ontology/oeo/OEO_00140157> :hasParent "(forall (x y) (if (hasParent x y) (not (or (hasUncle x y) (hasBrother x y)))))")
+ObjectPropertyAssertion( :hasParent :Mary :Bill )
+ObjectPropertyAssertion( :hasBrother :Bill :John )
+)

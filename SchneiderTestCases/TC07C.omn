@@ -1,0 +1,7 @@
+Prefix( : = <http://example.org#> )
+Ontology(
+Declaration( NamedIndividual( :Mary ) )
+Declaration( NamedIndividual( :Bill ) )
+Declaration( ObjectProperty( :hasRelative ) )
+ObjectPropertyAssertion( :hasRelative :Mary :Bill )
+)
