@@ -39,6 +39,8 @@ public class ApiServer {
             //bfoFetchClifAnnotations();
             //bfoWriteClifAnnotations();
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
+            //System.out.println(app.getIRIMatch("c/Users/simon/OneDrive/Hiwi/python-gavel-owl/ba_architecture_example.omn",
+            //    "https://github.com/gavel-tool/python-gavel-owl/tptp_annotation"));
             //app.addClassInstantiationToOntology("../oeo-annot-bfo.omn", "../oeo-annot-bfo-class-instantiation.omn");
             /*OWLOntologyManager m = OWLManager.createOWLOntologyManager();
             OWLOntology ontology =
