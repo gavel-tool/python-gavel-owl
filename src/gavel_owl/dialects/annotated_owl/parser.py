@@ -174,10 +174,10 @@ class OntologyHandler:
         self.pp = pp
         self.verbose = verbose
         if tptp_annotation_properties is None:
-            tptp_annotation_properties = ["http://example.org/tptp_annotation"]
+            tptp_annotation_properties = ["https://github.com/gavel-tool/python-gavel-owl/tptp_annotation"]
         self.tptp_annotation_properties = tptp_annotation_properties
         if clif_annotation_properties is None:
-            clif_annotation_properties = ["http://example.org/clif_annotation"]
+            clif_annotation_properties = ["https://github.com/gavel-tool/python-gavel-owl/clif_annotation"]
         self.clif_annotation_properties = clif_annotation_properties
         self.use_readable_names = use_readable_names
 
@@ -190,12 +190,14 @@ class OntologyHandler:
     def get_annotation_properties(self):
         tptp_properties = []
         for name in self.tptp_annotation_properties:
-            tptp_properties.append(self.app.getIRIMatch(self.ontology_path, name))
+            match = self.app.getIRIMatch(self.ontology_path, name)
+            tptp_properties.append(match)
         self.tptp_annotation_properties = tptp_properties
 
         clif_properties = []
         for name in self.clif_annotation_properties:
-            clif_properties.append(self.app.getIRIMatch(self.ontology_path, name))
+            match = self.app.getIRIMatch(self.ontology_path, name)
+            clif_properties.append(match)
         self.clif_annotation_properties = clif_properties
 
     # returns a list of all annotations in the ontology with the specified annotation properties
@@ -242,7 +244,6 @@ class OntologyHandler:
     # returns a Gavel problem consisting of the translation of the OWL ontology and the FOL annotations
     def build_combined_theory(self):
         start = time.time()
-
         self.get_annotation_properties()
         if self.verbose:
             print(f'Annotation properties used:\n\t TPTP: {self.tptp_annotation_properties}\n\t '
