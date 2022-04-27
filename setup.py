@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 setup(
     name='gavel-owl',
-    version='0.0.2',
+    version='0.0.3.dev0',
     description='An extension for gavel introducing OWL translations.',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
