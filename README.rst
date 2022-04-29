@@ -59,6 +59,14 @@ Installation
 ::
 
     pip install gavel-owl
+ 
+ 
+The latest version is currently available as a pre-release and can be installed with::
+ 
+    pip install gavel==0.1.3.dev0
+
+    pip install gavel-owl==0.0.3.dev0
+
 
 Usage
 =====
