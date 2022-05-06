@@ -6,7 +6,7 @@ import re
 
 from gavel.logic import logic
 
-from src.gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
+from gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
 
 LOGGER = logging.getLogger(__name__)
 
