@@ -417,7 +417,7 @@ public class ApiServer {
             }
             //System.out.println(labels[i]);
             // use suffixes of iris
-            int lev_dist = levDist(i >= labels.length ? match.substring(match.length() - symbol.length()) : match, symbol);
+            int lev_dist = levDist(i >= labels.length ? match.substring(Math.max(0, match.length() - symbol.length())) : match, symbol);
             //System.out.println("Distance between " + labels[i] + " and " + symbol + ": " + lev_dist);
             if (lev_dist < max_dist) {
                 max_dist = lev_dist;

@@ -11,8 +11,8 @@ from lark import Token
 from py4j.java_collections import ListConverter
 from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerParameters
 
-from src.gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
-from src.gavel_owl.dialects.annotated_owl.macleod_clif_parser import parse_string
+from gavel_owl.dialects.annotated_owl.FOLSymbol import FOLSymbol
+from gavel_owl.dialects.annotated_owl.macleod_clif_parser import parse_string
 
 
 # applies the name mapping from dict to each formula

@@ -1,6 +1,6 @@
 from gavel.dialects.base.dialect import Dialect
 
-from src.gavel_owl.dialects.annotated_owl.parser import AnnotatedOWLParser
+from gavel_owl.dialects.annotated_owl.parser import AnnotatedOWLParser
 
 
 class AnnotatedOWLDialect(Dialect):
