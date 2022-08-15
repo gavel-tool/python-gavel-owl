@@ -18,6 +18,7 @@ import org.semanticweb.owlapi.util.ShortFormFromRDFSLabelAxiomListProvider;
 import py4j.GatewayServer;
 import py4j.Py4JNetworkException;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,39 +40,9 @@ public class ApiServer {
             //bfoFetchClifAnnotations();
             //bfoWriteClifAnnotations();
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
-            //System.out.println(app.getIRIMatch("c/Users/simon/OneDrive/Hiwi/python-gavel-owl/ba_architecture_example.omn",
-            //    "https://github.com/gavel-tool/python-gavel-owl/tptp_annotation"));
-            //app.addClassInstantiationToOntology("../oeo-annot-bfo.omn", "../oeo-annot-bfo-class-instantiation.omn");
-            /*OWLOntologyManager m = OWLManager.createOWLOntologyManager();
-            OWLOntology ontology =
-                m.loadOntologyFromOntologyDocument(new File("../ba_architecture_example.omn"));
-            System.out.println(app.generateIRIToCurieMapping(ontology));
 
-
-            /*OWLOntologyManager m = OWLManager.createOWLOntologyManager();
-            OWLOntology ontology =
-                m.loadOntologyFromOntologyDocument(new File("iri-to-name-demo.ofn"));
-
-            for (Map.Entry<String, String> entry : app.getIRItoReadableNameMapping(ontology).entrySet()) {
-                System.out.println(entry.getKey() + " - " + entry.getValue());
-            }
-
-            /*Scanner scn = new Scanner(new File("../../../../Documents/example-ontologies/fibo-merged.owl"));
-            StringBuilder ontologyText = new StringBuilder();
-            while (scn.hasNext()) {
-                ontologyText.append(scn.nextLine()).append("\n");
-            }
-            System.out.println(new AxiomCount(app.loadOntology(ontologyText.toString())).getValue() + " & "
-                + app.getDLComplexity(ontologyText.toString()) + " & \\\\");
-
-            //AnnotatedLogicElement[] translation = app.translateOntology(ontologyText.toString());
-            AnnotatedLogicElement[] translation = app.translateOntologyFromFile("../../../../Documents/example-ontologies/oeo-merged.owl");
-
-            for (AnnotatedLogicElement t : translation) {
-                System.out.println(t);
-            }
-            System.out.println(app.getNameMapping(ontologyText.toString()));
-*/
+            System.out.println(app.getIRIMatch("C:\\Users\\simon\\Documents\\example-ontologies\\obi.owl",
+                "fiat object part"));
         } catch (Py4JNetworkException e) {
             e.printStackTrace();
             System.out.println("Starting server failed: " + e);
@@ -340,12 +311,31 @@ public class ApiServer {
     }
 
     private HashMap<String, String> getLabelToIRIMapping(OWLOntology ontology) {
-        ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
-            new ArrayList<>(),
-            ontology.axioms(Imports.INCLUDED).collect(Collectors.toList()));
+        //ShortFormFromRDFSLabelAxiomListProvider labelProvider = new ShortFormFromRDFSLabelAxiomListProvider(
+        //    new ArrayList<>(),
+        //    ontology.axioms(Imports.INCLUDED).collect(Collectors.toList()));
+        List<OWLAnnotationAssertionAxiom> ontologyAnnotations =
+            ontology.axioms(AxiomType.ANNOTATION_ASSERTION, Imports.INCLUDED).collect(Collectors.toList());
         HashMap<String, String> mapping = new HashMap<>();
-        ontology.signature(Imports.INCLUDED).
-            forEach(x -> mapping.put(labelProvider.getShortForm(x), x.getIRI().toString()));
+        ontology.signature(Imports.INCLUDED).forEach(x -> x.accept(new OWLEntityVisitor() {
+            @Override
+            public void doDefault(@Nonnull Object node) {
+                if (node instanceof OWLEntity) {
+                    OWLEntity entity = (OWLEntity) node;
+                    for (OWLAnnotationAssertionAxiom ax : ontologyAnnotations) {
+                        if (ax.getSubject().asIRI().isPresent()
+                            && ax.getSubject().asIRI().get().equals(entity.getIRI())
+                            && ax.getProperty().isLabel()
+                            && ax.getValue().asLiteral().isPresent()) {
+                            mapping.put(ax.getValue().asLiteral().get().getLiteral(), entity.getIRI().toString());
+                        }
+                    }
+
+                }
+            }
+
+        }));
+        //forEach(x -> mapping.put(labelProvider.getShortForm(x), x.getIRI().toString()));
         return mapping;
     }
 
