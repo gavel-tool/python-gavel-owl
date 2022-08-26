@@ -1,0 +1,327 @@
+Prefix(:=<http://www.example.org/bfo-2-0-clif-annotations-module.owl#>)
+Prefix(dc:=<http://purl.org/dc/elements/1.1/>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(foaf:=<http://xmlns.com/foaf/0.1/>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(skos:=<http://www.w3.org/2004/02/skos/core#>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
+Prefix(bfo-2-0-clif-annotations-module:=<https://github.com/gavel-tool/python-gavel-owl/>)
+
+
+Ontology(<http://www.example.org/bfo-2-0-clif-annotations-module.owl>
+#Import(<http://purl.obolibrary.org/obo/bfo_ro.owl>)
+
+Declaration(ObjectProperty(<https://github.com/gavel-tool/python-gavel-owl/process_profile_of>))
+Declaration(ObjectProperty(obo:BFO_0000050))
+Declaration(ObjectProperty(obo:BFO_0000084))
+Declaration(ObjectProperty(obo:BFO_0000108))
+Declaration(ObjectProperty(obo:BFO_0000132))
+Declaration(ObjectProperty(obo:BFO_0000136))
+Declaration(ObjectProperty(obo:BFO_0000139))
+Declaration(ObjectProperty(obo:BFO_0000153))
+Declaration(ObjectProperty(obo:BFO_0000175))
+Declaration(ObjectProperty(obo:BFO_0000181))
+Declaration(ObjectProperty(obo:BFO_0000195))
+Declaration(ObjectProperty(obo:BFO_0000199))
+Declaration(ObjectProperty(obo:BFO_0000200))
+Declaration(ObjectProperty(obo:BFO_0000216))
+Declaration(AnnotationProperty(<https://github.com/gavel-tool/python-gavel-owl/a>))
+Declaration(AnnotationProperty(dc:identifier))
+Declaration(AnnotationProperty(bfo-2-0-clif-annotations-module:clif-annotation))
+Declaration(AnnotationProperty(skos:altLabel))
+Declaration(AnnotationProperty(skos:definition))
+Declaration(AnnotationProperty(skos:example))
+Declaration(AnnotationProperty(skos:prefLabel))
+Declaration(AnnotationProperty(skos:scopeNote))
+Declaration(Datatype(xsd:string))
+############################
+#   Annotation Properties
+############################
+
+# Annotation Property: <https://github.com/gavel-tool/python-gavel-owl/a> (a)
+
+AnnotationAssertion(rdfs:comment <https://github.com/gavel-tool/python-gavel-owl/a> "'a' appears as a name in some CLIF annotations. The annotation property 'a' is used to bring a into the ontology's OWL signature so it can be matched with the CLIF name automatically.")
+AnnotationAssertion(rdfs:label <https://github.com/gavel-tool/python-gavel-owl/a> "a")
+
+# Annotation Property: bfo-2-0-clif-annotations-module:clif-annotation (clif annotation)
+
+AnnotationAssertion(rdfs:label bfo-2-0-clif-annotations-module:clif-annotation "clif annotation")
+
+
+############################
+#   Object Properties
+############################
+
+# Object Property: <https://github.com/gavel-tool/python-gavel-owl/process_profile_of> (process profile of)
+
+AnnotationAssertion(rdfs:label <https://github.com/gavel-tool/python-gavel-owl/process_profile_of> "process profile of")
+
+# Object Property: obo:RO_0004096 (DEPRECATED inheres in)
+
+AnnotationAssertion(rdfs:comment obo:RO_0004096 "DEPRECATED This relation is similar to but different in important respects to the characteristic-of relation. See comments on that relation for more information.")
+AnnotationAssertion(rdfs:label obo:RO_0004096 "inheres in"@en)
+AnnotationAssertion(owl:deprecated obo:RO_0004096 "true"^^xsd:boolean)
+
+# Object Property: obo:RO_0000053 (bearer of)
+
+AnnotationAssertion(obo:IAO_0000111 obo:RO_0000053 "bearer of"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0000053 "this apple is bearer of this red color"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0000053 "this vase is bearer of this fragility"@en)
+AnnotationAssertion(obo:IAO_0000115 obo:RO_0000053 "Inverse of characteristic_of"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:RO_0000053 "A bearer can have many dependents, and its dependents can exist for different periods of time, but none of its dependents can exist when the bearer does not exist."@en)
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0000053 "bearer_of"@en)
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0000053 "is bearer of"@en)
+AnnotationAssertion(obo:RO_0001900 obo:RO_0000053 obo:RO_0001901)
+AnnotationAssertion(rdfs:label obo:RO_0000053 "bearer of"@en)
+AnnotationAssertion(rdfs:label obo:RO_0000053 "has characteristic"@en)
+InverseFunctionalObjectProperty(obo:RO_0000053)
+ObjectPropertyRange(obo:RO_0000053 obo:BFO_0000020)
+
+# Object Property: obo:RO_0000080 (quality of)
+
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0000080 "this red color is a quality of this apple"@en)
+AnnotationAssertion(obo:IAO_0000115 obo:RO_0000080 "a relation between a quality and an independent continuant (the bearer), in which the quality specifically depends on the bearer for its existence"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:RO_0000080 "A quality inheres in its bearer at all times for which the quality exists."@en)
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0000080 "is quality of"@en)
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0000080 "quality_of"@en)
+AnnotationAssertion(rdfs:comment obo:RO_0000080 "This relation is modeled after the BFO relation of the same name which was in BFO2, but is used in a more restricted sense - specifically, we model this relation as functional (inherited from characteristic-of). Note that this relation is now removed from BFO2020.")
+AnnotationAssertion(rdfs:label obo:RO_0000080 "quality of"@en)
+SubObjectPropertyOf(obo:RO_0000080 obo:RO_0000052)
+InverseObjectProperties(obo:RO_0000080 obo:RO_0000086)
+
+# Object Property: obo:RO_0001025 (located in)
+
+AnnotationAssertion(obo:IAO_0000111 obo:RO_0001025 "located in"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0001025 "my brain is located in my head"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0001025 "this rat is located in this cage"@en)
+AnnotationAssertion(obo:IAO_0000115 obo:RO_0001025 "a relation between two independent continuants, the target and the location, in which the target is entirely within the location"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:RO_0001025 "Location as a relation between instances: The primitive instance-level relation c located_in r at t reflects the fact that each continuant is at any given time associated with exactly one spatial region, namely its exact location. Following we can use this relation to define a further instance-level location relation - not between a continuant and the region which it exactly occupies, but rather between one continuant and another. c is located in c1, in this sense, whenever the spatial region occupied by c is part_of the spatial region occupied by c1.    Note that this relation comprehends both the relation of exact location between one continuant and another which obtains when r and r1 are identical (for example, when a portion of fluid exactly fills a cavity), as well as those sorts of inexact location relations which obtain, for example, between brain and head or between ovum and uterus"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:RO_0001025 "Most location relations will only hold at certain times, but this is difficult to specify in OWL. See http://purl.obolibrary.org/obo/ro/docs/temporal-semantics/"@en)
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0001025 "located_in"@en)
+AnnotationAssertion(obo:RO_0001900 obo:RO_0001025 obo:RO_0001901)
+AnnotationAssertion(dc:source obo:RO_0001025 "http://www.obofoundry.org/ro/#OBO_REL:located_in")
+AnnotationAssertion(rdfs:label obo:RO_0001025 "located in"@en)
+TransitiveObjectProperty(obo:RO_0001025)
+ObjectPropertyDomain(Annotation(obo:IAO_0000116 "This is redundant with the more specific 'independent and not spatial region' constraint. We leave in the redundant axiom for use with reasoners that do not use negation.") obo:RO_0001025 obo:BFO_0000004)
+ObjectPropertyDomain(obo:RO_0001025 ObjectIntersectionOf(obo:BFO_0000004 ObjectComplementOf(obo:BFO_0000006)))
+ObjectPropertyRange(Annotation(obo:IAO_0000116 "This is redundant with the more specific 'independent and not spatial region' constraint. We leave in the redundant axiom for use with reasoners that do not use negation.") obo:RO_0001025 obo:BFO_0000004)
+ObjectPropertyRange(obo:RO_0001025 ObjectIntersectionOf(obo:BFO_0000004 ObjectComplementOf(obo:BFO_0000006)))
+
+# Object Property: obo:RO_0002350 (member of)
+
+AnnotationAssertion(obo:IAO_0000112 obo:RO_0002350 "An organism that is a member of a population of organisms")
+AnnotationAssertion(obo:IAO_0000115 obo:RO_0002350 "is member of is a mereological relation between a item and a collection.")
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0002350 "is member of")
+AnnotationAssertion(obo:IAO_0000118 obo:RO_0002350 "member part of")
+AnnotationAssertion(obo:IAO_0000119 obo:RO_0002350 "SIO")
+AnnotationAssertion(obo:RO_0001900 obo:RO_0002350 obo:RO_0001901)
+AnnotationAssertion(rdfs:label obo:RO_0002350 "member of"@en)
+SubObjectPropertyOf(obo:RO_0002350 obo:BFO_0000050)
+InverseObjectProperties(obo:RO_0002350 obo:RO_0002351)
+
+# Object Property: obo:BFO_0000050 (part of)
+
+AnnotationAssertion(obo:IAO_0000111 obo:BFO_0000050 "is part of"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:BFO_0000050 "my brain is part of my body (continuant parthood, two material entities)"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:BFO_0000050 "my stomach cavity is part of my stomach (continuant parthood, immaterial entity is part of material entity)"@en)
+AnnotationAssertion(obo:IAO_0000112 obo:BFO_0000050 "this day is part of this year (occurrent parthood)"@en)
+AnnotationAssertion(obo:IAO_0000115 obo:BFO_0000050 "a core relation that holds between a part and its whole"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:BFO_0000050 "Everything is part of itself. Any part of any part of a thing is itself part of that thing. Two distinct things cannot be part of each other."@en)
+AnnotationAssertion(obo:IAO_0000116 obo:BFO_0000050 "Occurrents are not subject to change and so parthood between occurrents holds for all the times that the part exists. Many continuants are subject to change, so parthood between continuants will only hold at certain times, but this is difficult to specify in OWL. See http://purl.obolibrary.org/obo/ro/docs/temporal-semantics/"@en)
+AnnotationAssertion(obo:IAO_0000116 obo:BFO_0000050 "Parthood requires the part and the whole to have compatible classes: only an occurrent can be part of an occurrent; only a process can be part of a process; only a continuant can be part of a continuant; only an independent continuant can be part of an independent continuant; only an immaterial entity can be part of an immaterial entity; only a specifically dependent continuant can be part of a specifically dependent continuant; only a generically dependent continuant can be part of a generically dependent continuant. (This list is not exhaustive.)
+
+A continuant cannot be part of an occurrent: use 'participates in'. An occurrent cannot be part of a continuant: use 'has participant'. A material entity cannot be part of an immaterial entity: use 'has location'. A specifically dependent continuant cannot be part of an independent continuant: use 'inheres in'. An independent continuant cannot be part of a specifically dependent continuant: use 'bearer of'."@en)
+AnnotationAssertion(obo:IAO_0000118 obo:BFO_0000050 "part_of"@en)
+AnnotationAssertion(obo:RO_0001900 obo:BFO_0000050 obo:RO_0001901)
+AnnotationAssertion(rdfs:label obo:BFO_0000050 "part of"@en)
+AnnotationAssertion(rdfs:seeAlso obo:BFO_0000050 "http://www.obofoundry.org/ro/#OBO_REL:part_of")
+InverseObjectProperties(obo:BFO_0000050 obo:BFO_0000051)
+TransitiveObjectProperty(obo:BFO_0000050)
+
+# Object Property: obo:BFO_0000084 (generically depends on)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000084 "252-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000084 "generically depends on"@en)
+AnnotationAssertion(skos:altLabel obo:BFO_0000084 "g-depends on"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000084 "a g-dependent continuant b g-depends on an independent continuant c=Def there inheres in c an s-dependent continuant which concretizes b"@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000084 "generically depends on"@en)
+ObjectPropertyDomain(obo:BFO_0000084 obo:BFO_0000031)
+ObjectPropertyRange(obo:BFO_0000084 ObjectIntersectionOf(obo:BFO_0000004 ObjectComplementOf(obo:BFO_0000006)))
+
+# Object Property: obo:BFO_0000108 (exists at)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000108 "118-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000108 "exists at"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000108 "(Elucidation) exists at is a relation between a particular and some temporal region at which the particular exists"@en)
+AnnotationAssertion(skos:example obo:BFO_0000108 "First World War exists at 1914-1916, Mexico exists at January 1, 2000."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000108 "exists at"@en)
+
+# Object Property: obo:BFO_0000136 (proper temporal part of)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000136 "116-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000136 "proper temporal part of"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000136 "b proper temporal part of c =Def b temporal part of c & not (b = c)"@en)
+AnnotationAssertion(skos:example obo:BFO_0000136 "As for temporal part of."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000136 "proper temporal part of"@en)
+SubObjectPropertyOf(obo:BFO_0000136 obo:BFO_0000139)
+SubObjectPropertyOf(obo:BFO_0000136 obo:BFO_0000175)
+ObjectPropertyDomain(obo:BFO_0000136 obo:BFO_0000003)
+ObjectPropertyRange(obo:BFO_0000136 obo:BFO_0000003)
+
+# Object Property: obo:BFO_0000139 (temporal part of)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000139 "078-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000139 "temporal part of"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000139 "b temporal part of c =Def b occurrent part of c & either b and c are temporal regions or b and c are spatiotemporal regions & b temporally projects onto an occurrent part of the temporal region that c temporally projects onto or b and c are processes or process boundaries & b occupies a temporal region that is an occurrent part of the temporal region that c occupies"@en)
+AnnotationAssertion(skos:example obo:BFO_0000139 "Your heart beating from 4pm to 5pm today is a temporal part of the process of your heart beating; the 4th year of your life is a temporal part of your life, as is the process boundary which separates the 3rd and 4th years of your life; the first quarter of a game of football is a temporal part of the whole game."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000139 "temporal part of"@en)
+SubObjectPropertyOf(obo:BFO_0000139 obo:BFO_0000050)
+TransitiveObjectProperty(obo:BFO_0000139)
+ObjectPropertyDomain(obo:BFO_0000139 obo:BFO_0000003)
+ObjectPropertyRange(obo:BFO_0000139 obo:BFO_0000003)
+
+# Object Property: obo:BFO_0000153 (temporally projects onto)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000153 "080-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000153 "temporally projects onto"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000153 "(Elucidation) temporally projects onto is a relation between a spatiotemporal region s and some temporal region which is the temporal extent of s"@en)
+AnnotationAssertion(skos:example obo:BFO_0000153 "The world line of a particle temporally projects onto the temporal region extending from the beginning to the end of the existence of the particle."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000153 "temporally projects onto"@en)
+FunctionalObjectProperty(obo:BFO_0000153)
+ObjectPropertyDomain(obo:BFO_0000153 obo:BFO_0000011)
+ObjectPropertyRange(obo:BFO_0000153 obo:BFO_0000008)
+
+# Object Property: obo:BFO_0000175 (proper part of)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000175 "224-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000175 "proper part of"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000175 "b proper part of c =Def b part of c & not (c part of b)"@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000175 "proper part of"@en)
+SubObjectPropertyOf(obo:BFO_0000175 obo:BFO_0000050)
+
+# Object Property: obo:BFO_0000195 (specifically depends on)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000195 "012-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000195 "specifically depends on"@en)
+AnnotationAssertion(skos:altLabel obo:BFO_0000195 "s-depends on"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000195 "(Elucidation) b specifically depends on c means: b and c do not share common parts & b is of a nature such that at all times t it cannot exist at t unless c exists at t & b is not a boundary of c"@en)
+AnnotationAssertion(skos:example obo:BFO_0000195 "A shape s-depends on the shaped object, hue, saturation and brightness of a colour sample s-depend on each other."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000195 "specifically depends on"@en)
+AnnotationAssertion(skos:scopeNote obo:BFO_0000195 "The analogue of s-dependence for occurrents is has participant."@en)
+ObjectPropertyDomain(obo:BFO_0000195 obo:BFO_0000020)
+ObjectPropertyRange(obo:BFO_0000195 ObjectUnionOf(obo:BFO_0000004 obo:BFO_0000020))
+
+# Object Property: obo:BFO_0000199 (occupies temporal region)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000199 "132-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000199 "occupies temporal region"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000199 "p occupies temporal region t =Def the spatiotemporal region occupied by p temporally projects onto t"@en)
+AnnotationAssertion(skos:example obo:BFO_0000199 "The Second World War occupies the temporal region September 1, 1939 - September 2, 1945."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000199 "occupies temporal region"@en)
+FunctionalObjectProperty(obo:BFO_0000199)
+ObjectPropertyDomain(obo:BFO_0000199 obo:BFO_0000003)
+ObjectPropertyRange(obo:BFO_0000199 obo:BFO_0000008)
+
+# Object Property: obo:BFO_0000200 (occupies spatiotemporal region)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000200 "082-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000200 "occupies spatiotemporal region"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000200 "(Elucidation) p occupies spatiotemporal region s is a relation between an occurrent p and the spatiotemporal region s which is its spatiotemporal extent"@en)
+AnnotationAssertion(skos:example obo:BFO_0000200 "A particle emitted by a nuclear reactor occupies the spatiotemporal region which is its trajectory."@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000200 "occupies spatiotemporal region"@en)
+FunctionalObjectProperty(obo:BFO_0000200)
+ObjectPropertyDomain(obo:BFO_0000200 obo:BFO_0000003)
+ObjectPropertyRange(obo:BFO_0000200 obo:BFO_0000011)
+
+# Object Property: obo:BFO_0000216 (spatially projects onto)
+
+AnnotationAssertion(dc:identifier obo:BFO_0000216 "246-BFO")
+AnnotationAssertion(rdfs:label obo:BFO_0000216 "spatially projects onto"@en)
+AnnotationAssertion(skos:definition obo:BFO_0000216 "b spatially projects onto c =Def b is a spatiotemporal region and c is a spatial region and c is the spatial extent of b"@en)
+AnnotationAssertion(skos:prefLabel obo:BFO_0000216 "spatially projects onto"@en)
+ObjectPropertyDomain(obo:BFO_0000216 obo:BFO_0000011)
+ObjectPropertyRange(obo:BFO_0000216 obo:BFO_0000006)
+
+
+
+############################
+#   Classes
+############################
+
+# Class: obo:BFO_0000003 (occurrent)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000003 " (forall (x) (if (occurrent x) (exists (r) (and (\"spatiotemporal region\" r) (\"occupies spatiotemporal region\" x r)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000003 " (forall (x) (iff (occurrent x) (and (entity x) (exists (y) (\"temporal part of\" y x)))))")
+
+# Class: obo:BFO_0000004 (independent continuant)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000004 " (forall (x) (if (\"independent continuant\" x) (exists (r) (and (\"spatial region\" r) (\"located in\" x r)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000004 " (forall (x) (if (\"independent continuant\" x) (exists (y) (and (entity y) (\"specifically depends on\" y x)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000004 " (iff (\"independent continuant\" a) (and (continuant a) (not (exists (b) (\"specifically depends on\" a b)))))")
+
+# Class: obo:BFO_0000006 (spatial region)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000006 " (forall (x y) (if (and (\"spatial region\" x) (\"part of\" y x)) (\"spatial region\" y)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000006 " (forall (x) (if (\"spatial region\" x) (continuant x)))")
+
+# Class: obo:BFO_0000008 (temporal region)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000008 " (forall (r) (if (\"temporal region\" r) (\"occupies temporal region\" r r)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000008 " (forall (x y) (if (and (\"temporal region\" x) (\"part of\" y x)) (\"temporal region\" y)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000008 " (forall (x) (if (\"temporal region\" x) (occurrent x)))")
+
+# Class: obo:BFO_0000011 (spatiotemporal region)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000011 " (forall (r) (if (\"spatiotemporal region\" r) (\"occupies spatiotemporal region\" r r)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000011 " (forall (x y) (if (and (\"spatiotemporal region\" x) (\"part of\" y x)) (\"spatiotemporal region\" y)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000011 " (forall (x) (if (\"spatiotemporal region\" x) (exists (y) (and (\"spatial region\" y) (\"spatially projects onto\" x y)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000011 " (forall (x) (if (\"spatiotemporal region\" x) (exists (y) (and (\"temporal region\" y) (\"temporally projects onto\" x y)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000011 " (forall (x) (if (\"spatiotemporal region\" x) (occurrent x)))")
+
+# Class: obo:BFO_0000020 (specifically dependent continuant)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000020 " (iff (\"specifically dependent continuant\" a) (and (continuant a) (exists (b) (and (\"independent continuant\" b) (not (\"spatial region\" b)) (\"specifically depends on\" a b)))))")
+
+# Class: obo:BFO_0000031 (generically dependent continuant)
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000031 " (iff (\"generically dependent continuant\" a) (and (continuant a) (exists (b) (\"generically depends on\" a b))))")
+
+
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000002 " (forall (x y) (if (and (continuant x) (\"part of\" y x)) (continuant y)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000002 " (forall (x) (if (\"material entity\" x) (exists (t) (and (\"temporal region\" t) (\"exists at\" x t)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000002 " (forall (x) (if (continuant x) (entity x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000009 " (forall (x) (if (\"two-dimensional spatial region\" x) (\"spatial region\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000015 " (iff (\"process\" a) (and (occurrent a) (exists (b) (\"proper temporal part of\" b a)) (exists (c) (and (\"material entity\" c) (\"specifically depends on\" a c)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000016 " (forall (x) (if (\"realizable entity\" x) (exists (y) (and (\"material entity\" y) (\"specifically depends on\" x y)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000016 " (forall (x) (if (disposition x) (and (\"realizable entity\" x) (exists (y) (and (\"material entity\" y) (\"bearer of\" x y))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000017 " (forall (x) (if (\"realizable entity\" x) (and (\"specifically dependent continuant\" x) (exists (y) (and (\"independent continuant\" y) (not (\"spatial region\" y)) (\"inheres in\" x y))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000017 " (forall (x) (if (\"realizable entity\" x) (exists (y) (and (\"independent continuant\" y) (not (\"spatial region\" y)) (\"bearer of\" y x)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000018 " (forall (x) (if (\"zero-dimensional spatial region\" x) (\"spatial region\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000019 " (forall (x) (if (exists (t) (and (\"exists at\" x t) (quality x))) (forall (t_1) (if (\"exists at\" x t_1) (quality x)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000019 " (forall (x) (if (quality x) (\"specifically dependent continuant\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000023 " (forall (x) (if (role x) (\"realizable entity\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000024 " (forall (x) (if (\"fiat object part\" x) (and (\"material entity\" x) (exists (y) (and (object y) (\"proper part of\" x y))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000026 " (forall (x) (if (\"one-dimensional spatial region\" x) (\"spatial region\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000027 " (forall (x) (if (\"object aggregate\" x) (and (\"material entity\" x) (exists (y z) (and (object y) (object z) (\"member of\" y x) (\"member of\" z x) (not (= y z)))) (not (exists (w) (and (\"member of\" w x) (not (object w))))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000028 " (forall (x) (if (\"three-dimensional spatial region\" x) (\"spatial region\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000029 " (forall (x) (if (site x) (\"immaterial entity\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000034 " (forall (x) (if (\"function\" x) (disposition x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000035 " (forall (x) (if (\"process boundary\" x) (exists (y) (and (\"zero-dimensional temporal region\" y) (\"occupies temporal region\" x y)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000035 " (iff (\"process boundary\" a) (exists (p) (and (\"process\" p) (\"temporal part of\" a p) (not (exists (b) (\"proper temporal part of\" b a))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000038 " (forall (x) (if (\"one-dimensional temporal region\" x) (\"temporal region\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000040 " (forall (x) (if (\"material entity\" x) (\"independent continuant\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000040 " (forall (x) (if (and (entity x) (exists (y) (and (\"material entity\" y) (\"part of\" x y)))) (\"material entity\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000040 " (forall (x) (if (and (entity x) (exists (y) (and (\"material entity\" y) (\"part of\" y x)))) (\"material entity\" x)))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000140 " (iff (\"continuant fiat boundary\" a) (and (\"immaterial entity\" a) (exists (b) (and (or (\"zero-dimensional spatial region\" b) (\"one-dimensional spatial region\" b) (\"two-dimensional spatial region\" b)) (\"located in\" a b))) (not (exists (c) (and (\"spatial region\" c) (\"part of\" c a))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000142 " (iff (\"one-dimensional continuant fiat boundary\" a) (and (\"continuant fiat boundary\" a) (exists (b) (and (\"one-dimensional spatial region\" b) (\"located in\" a b)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000144 " (forall (x y) (if (\"process profile of\" x y) (and (\"proper part of\" x y) (exists (z t) (and (\"proper part of\" z y) (\"temporal region\" t) (\"occupies spatiotemporal region\" x t) (\"occupies spatiotemporal region\" y t) (\"occupies spatiotemporal region\" z t) (not (exists (w) (and (\"part of\" w x) (\"part of\" w z)))))))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000144 " (iff (\"process profile\" a) (exists (b) (and (\"process\" b) (\"process profile of\" a b))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000145 " (iff (\"relational quality\" a) (exists (b c) (and (\"independent continuant\" b) (\"independent continuant\" c) (\"quality of\" a b) (\"quality of\" a c))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000146 " (iff (\"two-dimensional continuant fiat boundary\" a) (and (\"continuant fiat boundary\" a) (exists (b) (and (\"two-dimensional spatial region\" b) (\"located in\" a b)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000147 " (iff (\"zero-dimensional continuant fiat boundary\" a) (and (\"continuant fiat boundary\" a) (exists (b) (and (\"zero-dimensional spatial region\" b) (\"located in\" a b)))))")
+AnnotationAssertion(bfo-2-0-clif-annotations-module:clif-annotation obo:BFO_0000148 " (forall (x) (if (\"zero-dimensional temporal region\" x) (\"temporal region\" x)))")
+)
