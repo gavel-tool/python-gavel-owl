@@ -56,21 +56,14 @@ An extension for gavel introducing OWL translations.
 Installation
 ============
 
-::
-
-    pip install gavel-owl
- 
+:: 
  
 The latest released version can be installed with::
-
-    pip install gavel
 
     pip install gavel-owl
 
 
 The latest development version can be installed with::
-
-    pip install git+https://github.com/gavel-tool/python-gavel.git@dev
     
     pip install git+https://github.com/gavel-tool/python-gavel-owl.git@dev
     
