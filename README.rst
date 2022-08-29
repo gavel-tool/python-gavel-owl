@@ -61,13 +61,19 @@ Installation
     pip install gavel-owl
  
  
-The latest version is currently available as a pre-release and can be installed with::
- 
-    pip install gavel==0.1.3.dev0
+The latest released version can be installed with::
 
-    pip install gavel-owl==0.0.3.dev0
+    pip install gavel
+
+    pip install gavel-owl
 
 
+The latest development version can be installed with::
+
+    pip install git+https://github.com/gavel-tool/python-gavel.git@dev
+    
+    pip install git+https://github.com/gavel-tool/python-gavel-owl.git@dev
+    
 Usage
 =====
 
@@ -88,7 +94,7 @@ You can also submit arguments to fist-order prover Vampire consisting of the tra
 
     python -m gavel owl-prove your-premises.owl your-conjectures.tptp
 
-In order to translate an owl ontology with first-order annotation into tptp syntax, you can use
+In order to translate an owl ontology with first-order annotation into tptp syntax, you can use::
 
     python -m gavel translate annotated-owl tptp your-ontology.owl
 
@@ -100,19 +106,38 @@ There are several commands available that can be accessed via::
 
     python -m gavel COMMAND [ARGUMENTS]
 
-- start-server: starts a subprocess that connects the Python program to its Java components. Other functions such as translate will only run if this connection has been established beforehand. The optional arguments -jp and -pp can be used for custom ports. Otherwise, the default ports will be used. -jp and -pp can be used for all other commands (except prove) analogously.
+- **start-server**: starts a subprocess that connects the Python program to its Java components. Other functions such as translate will only run if this connection has been established beforehand. The optional arguments -jp and -pp can be used for custom ports. Otherwise, the default ports will be used. -jp and -pp can be used for all other commands (except prove) analogously.
 
-- translate: A Gavel function that translates the contents of a given file from one language, e.g. OWL, to another language, e.g. TPTP. If the option --save is used, the translation is stored in the given file, else it is gets displayed in the command line.
+- **translate**: A Gavel function that translates the contents of a given file from one language, e.g. OWL, to another language, e.g. TPTP. If the option --save is used, the translation is stored in the given file, else it is gets displayed in the command line. The following options are avaiable for translate:
 
-- check-consistency: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
+    - ``--clif-properties`` (only for input dialect ``annotated-owl``) This option accepts arbitrary many IRIs or labels of OWL annotation properties. The values of annotation axioms using these properties will be interpreted as CLIF axioms. If this option is set with no arguments, the tool will not look for any CLIF axioms. If this option is not set, it will default to ``https://github.com/gavel-tool/python-gavel-owl/clif_annotation`` as an annotation property.
+    - ``--tptp-properties`` (only for input dialect ``annotated-owl``) This is analogous to **clif-properties**. Here, the default value is ``https://github.com/gavel-tool/python-gavel-owl/tptp_annotation``.
+    
+    - ``--shorten-names -n`` If this flag is set, the short form of IRIs will be used.
+    
+    - ``--readable-names`` (only for input dialects ``annotated-owl`` and ``owl``) This flag replaces IRIs with labels (if available) or shortened IRIs.
+    
+    - ``--no-annotations -a`` This flag can be set to avoid rendering annotations in the output dialect. For the translation from ``annotated-owl`` to ``tptp``, these annotations contain the OWL axiom or FOL annotation the is the origin of the corresponding FOL axioms.
+    
+    - ``--jp`` (only for input dialects ``annotated-owl`` and ``owl``) Sets the Java port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25333``.
+    
+    - ``--pp`` (only for input dialects ``annotated-owl`` and ``owl``) Sets the Python port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25334``.
+    
+    - ``--verbose -v`` (only for input dialect ``annotated-owl``) If this flag is set, additional information on the translation process will be put in the command line, such as the mapping between OWL entities and FOL names.
+    
+    - ``--save -s`` This option specifies the path for saving the translation result. If **save** is not set, the result will be put out to the command line.
+    
+    - ``--save-dol`` (only for input dialect ``annotated-owl``) This argument can be used to set a path under which to store the DOL-file generated from the annotated ontology.
 
-- owl-prove: takes two arguments, an OWL file and a TPTP file. It uses Vampire to prove the conjectures provided in the TPTP file based on the translation of the OWL file. If the --steps flag is set, it will return the proof steps, otherwise it will only return the reasoner's result.
+- **check-consistency**: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
 
-- stop-server: Ends the Java connection established by start-server.
+- **owl-prove**: takes two arguments, an OWL file and a TPTP file. It uses Vampire to prove the conjectures provided in the TPTP file based on the translation of the OWL file. If the --steps flag is set, it will return the proof steps, otherwise it will only return the reasoner's result.
 
-- prove: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
+- **stop-server**: Ends the Java connection established by start-server.
 
-- prove-ontology-entailment: Checks if an OWL ontology can be entailed from another. It returns the result based on OWL reasoning and based on FOL reasoning using the annotated-owl translation.
+- **prove**: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
+
+- **prove-ontology-entailment**: Checks if an OWL ontology can be entailed from another. It returns the result based on OWL reasoning and based on FOL reasoning using the annotated-owl translation.
 
 For further options use::
 
