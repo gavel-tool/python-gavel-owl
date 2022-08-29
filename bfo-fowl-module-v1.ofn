@@ -12,8 +12,7 @@ Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
 Prefix(bfo-2-0-clif-annotations-module:=<https://github.com/gavel-tool/python-gavel-owl/>)
 
 
-Ontology(<http://www.example.org/bfo-2-0-clif-annotations-module.owl>
-#Import(<http://purl.obolibrary.org/obo/bfo_ro.owl>)
+Ontology(<http://github.com/gavel-tool/python-gavel-owl/bfo-fowl-module.owl>
 
 Declaration(ObjectProperty(<https://github.com/gavel-tool/python-gavel-owl/process_profile_of>))
 Declaration(ObjectProperty(obo:BFO_0000050))

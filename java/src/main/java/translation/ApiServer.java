@@ -41,8 +41,8 @@ public class ApiServer {
             //bfoWriteClifAnnotations();
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
 
-            System.out.println(app.getIRIMatch("C:\\Users\\simon\\Documents\\example-ontologies\\obi.owl",
-                "fiat object part"));
+            //app.addClassInstantiationToOntology("C:\\Users\\simon\\Documents\\example-ontologies\\obi_annot_bfo_merged4.owl",
+            //    "C:\\Users\\simon\\Documents\\example-ontologies\\obi_annot_bfo_merged_instantiated.owl");
         } catch (Py4JNetworkException e) {
             e.printStackTrace();
             System.out.println("Starting server failed: " + e);
@@ -59,8 +59,8 @@ public class ApiServer {
 
         int index = 0;
         for (OWLEntity owlClass : ontology.signature().filter(AsOWLClass::isOWLClass).collect(Collectors.toList())) {
-            OWLNamedIndividual ind = df.getOWLNamedIndividual("http://www.example.org/",
-                "ind_" + index++);
+            OWLNamedIndividual ind = df.getOWLNamedIndividual(
+                "https://github.com/gavel-tool/python-gavel-owl/", "ind_" + index++);
             OWLAxiom declAxiom = df.getOWLDeclarationAxiom(ind);
             OWLAxiom classAssertAxiom = df.getOWLClassAssertionAxiom((OWLClassExpression) owlClass, ind);
             ontology.add(declAxiom, classAssertAxiom);
