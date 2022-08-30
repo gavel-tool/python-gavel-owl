@@ -40,7 +40,6 @@ public class ApiServer {
             //bfoFetchClifAnnotations();
             //bfoWriteClifAnnotations();
             ApiServer app = new ApiServer(parseInt(args[0]), parseInt(args[1]));
-
             //app.addClassInstantiationToOntology("C:\\Users\\simon\\Documents\\example-ontologies\\obi_annot_bfo_merged4.owl",
             //    "C:\\Users\\simon\\Documents\\example-ontologies\\obi_annot_bfo_merged_instantiated.owl");
         } catch (Py4JNetworkException e) {
