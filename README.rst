@@ -121,6 +121,8 @@ There are several commands available that can be accessed via::
     - ``--save -s`` This option specifies the path for saving the translation result. If **save** is not set, the result will be put out to the command line.
     
     - ``--save-dol`` (only for input dialect ``annotated-owl``) This argument can be used to set a path under which to store the DOL-file generated from the annotated ontology.
+    
+    - ``--tptp-input`` (only for input dialect ``annotated-owl``) Use this argument in combination with one or multiple filenames to add TPTP files to the ontology. The axioms in these files are treated like TPTP annotations.
 
 - **check-consistency**: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
 
