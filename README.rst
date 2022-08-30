@@ -51,7 +51,7 @@ Overview
 
 .. end-badges
 
-An extension for gavel introducing OWL translations.
+An extension for gavel introducing OWL and FOWL (OWL with FOL annotations) translations.
 
 Installation
 ============
@@ -66,6 +66,8 @@ The latest released version can be installed with::
 The latest development version can be installed with::
     
     pip install git+https://github.com/gavel-tool/python-gavel-owl.git@dev
+    
+For the development version, you need to install the jar-file manually. This is done by running ``mvn install`` in the ``java`` directory. Copy the resulting jar-file from ``java/target/java-1.0-SNAPSHOT.one-jar.jar`` to ``src/gavel_owl/jars/api.jar`` (be sure to use the one-jar-file, not the regular jar-file).
     
 Usage
 =====
