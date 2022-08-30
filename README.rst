@@ -72,7 +72,7 @@ For the development version, you need to install the jar-file manually. This is 
 Usage
 =====
 
-This plugin extends gavel by two new dialects, `owl` and `annotated-owl`. This enables the various
+This plugin extends gavel by two new dialects, `owl` and `fowl`. This enables the various
 features of gavel to be used with owl ontologies. These functionalities use the
 java-based OWL-API. Therefore, you have to start the java backend in order to
 use most owl-based functionalities. The `gavel-owl` plugin provides a single
@@ -89,9 +89,9 @@ You can also submit arguments to fist-order prover Vampire consisting of the tra
 
     python -m gavel owl-prove your-premises.owl your-conjectures.tptp
 
-In order to translate an owl ontology with first-order annotation into tptp syntax, you can use::
+In order to translate an owl ontology with first-order annotations into tptp syntax, you can use::
 
-    python -m gavel translate annotated-owl tptp your-ontology.owl
+    python -m gavel translate fowl tptp your-ontology.owl
 
 The running java backend can be terminated::
 
@@ -105,26 +105,26 @@ There are several commands available that can be accessed via::
 
 - **translate**: A Gavel function that translates the contents of a given file from one language, e.g. OWL, to another language, e.g. TPTP. If the option --save is used, the translation is stored in the given file, else it is gets displayed in the command line. The following options are avaiable for translate:
 
-    - ``--clif-properties`` (only for input dialect ``annotated-owl``) This option accepts arbitrary many IRIs or labels of OWL annotation properties. The values of annotation axioms using these properties will be interpreted as CLIF axioms. If this option is set with no arguments, the tool will not look for any CLIF axioms. If this option is not set, it will default to ``https://github.com/gavel-tool/python-gavel-owl/clif_annotation`` as an annotation property.
-    - ``--tptp-properties`` (only for input dialect ``annotated-owl``) This is analogous to **clif-properties**. Here, the default value is ``https://github.com/gavel-tool/python-gavel-owl/tptp_annotation``.
+    - ``--clif-properties`` (only for input dialect ``fowl``) This option accepts arbitrary many IRIs or labels of OWL annotation properties. The values of annotation axioms using these properties will be interpreted as CLIF axioms. If this option is set with no arguments, the tool will not look for any CLIF axioms. If this option is not set, it will default to ``https://github.com/gavel-tool/python-gavel-owl/clif_annotation`` as an annotation property.
+    - ``--tptp-properties`` (only for input dialect ``fowl``) This is analogous to **clif-properties**. Here, the default value is ``https://github.com/gavel-tool/python-gavel-owl/tptp_annotation``.
     
     - ``--shorten-names -n`` If this flag is set, the short form of IRIs will be used.
     
-    - ``--readable-names`` (only for input dialects ``annotated-owl`` and ``owl``) This flag replaces IRIs with labels (if available) or shortened IRIs.
+    - ``--readable-names`` (only for input dialects ``fowl`` and ``owl``) This flag replaces IRIs with labels (if available) or shortened IRIs.
     
-    - ``--no-annotations -a`` This flag can be set to avoid rendering annotations in the output dialect. For the translation from ``annotated-owl`` to ``tptp``, these annotations contain the OWL axiom or FOL annotation the is the origin of the corresponding FOL axioms.
+    - ``--no-annotations -a`` This flag can be set to avoid rendering annotations in the output dialect. For the translation from ``fowl`` to ``tptp``, these annotations contain the OWL axiom or FOL annotation the is the origin of the corresponding FOL axioms.
     
-    - ``--jp`` (only for input dialects ``annotated-owl`` and ``owl``) Sets the Java port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25333``.
+    - ``--jp`` (only for input dialects ``fowl`` and ``owl``) Sets the Java port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25333``.
     
-    - ``--pp`` (only for input dialects ``annotated-owl`` and ``owl``) Sets the Python port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25334``.
+    - ``--pp`` (only for input dialects ``fowl`` and ``owl``) Sets the Python port for the connection to FOWL's Java server. This should be the same number used for **start-server**. The default value is ``25334``.
     
-    - ``--verbose -v`` (only for input dialect ``annotated-owl``) If this flag is set, additional information on the translation process will be put in the command line, such as the mapping between OWL entities and FOL names.
+    - ``--verbose -v`` (only for input dialect ``fowl``) If this flag is set, additional information on the translation process will be put in the command line, such as the mapping between OWL entities and FOL names.
     
     - ``--save -s`` This option specifies the path for saving the translation result. If **save** is not set, the result will be put out to the command line.
     
-    - ``--save-dol`` (only for input dialect ``annotated-owl``) This argument can be used to set a path under which to store the DOL-file generated from the annotated ontology.
+    - ``--save-dol`` (only for input dialect ``fowl``) This argument can be used to set a path under which to store the DOL-file generated from the annotated ontology.
     
-    - ``--tptp-input`` (only for input dialect ``annotated-owl``) Use this argument in combination with one or multiple filenames to add TPTP files to the ontology. The axioms in these files are treated like TPTP annotations.
+    - ``--tptp-input`` (only for input dialect ``fowl``) Use this argument in combination with one or multiple filenames to add TPTP files to the ontology. The axioms in these files are treated like TPTP annotations.
 
 - **check-consistency**: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
 
@@ -134,7 +134,7 @@ There are several commands available that can be accessed via::
 
 - **prove**: a function from Gavel that takes the name of a FOL prover and a TPTP file and returns the prover's result for the given problem.
 
-- **prove-ontology-entailment**: Checks if an OWL ontology can be entailed from another. It returns the result based on OWL reasoning and based on FOL reasoning using the annotated-owl translation.
+- **prove-ontology-entailment**: Checks if an OWL ontology can be entailed from another. It returns the result based on OWL reasoning and based on FOL reasoning using the fowl translation.
 
 For further options use::
 
