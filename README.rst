@@ -51,7 +51,7 @@ Overview
 
 .. end-badges
 
-An extension for gavel introducing OWL and FOWL (OWL with FOL annotations) translations.
+An extension for Gavel introducing OWL and FOWL (OWL with FOL annotations) translations as well as related functionality regarding OWL and FOWL ontologies.
 
 Installation
 ============
@@ -73,7 +73,7 @@ Usage
 =====
 
 This plugin extends gavel by two new dialects, `owl` and `fowl`. This enables the various
-features of gavel to be used with owl ontologies. These functionalities use the
+features of gavel to be used with owl / fowl ontologies. These functionalities use the
 java-based OWL-API. Therefore, you have to start the java backend in order to
 use most owl-based functionalities. The `gavel-owl` plugin provides a single
 command to do that::
