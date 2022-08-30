@@ -1,6 +1,6 @@
 from gavel.dialects.base.dialect import Dialect
 
-from gavel_owl.dialects.annotated_owl.parser import AnnotatedOWLParser
+from gavel_owl.dialects.fowl.parser import AnnotatedOWLParser
 
 
 class AnnotatedOWLDialect(Dialect):
@@ -8,4 +8,4 @@ class AnnotatedOWLDialect(Dialect):
 
     @classmethod
     def _identifier(cls):
-        return "annotated-owl"
+        return "fowl"

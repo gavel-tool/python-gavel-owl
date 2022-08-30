@@ -25,8 +25,7 @@ from py4j.java_gateway import JavaGateway, GatewayParameters, CallbackServerPara
 import os
 from gavel_owl import package_directory
 
-from gavel_owl.dialects.annotated_owl.ontology_inference import \
-    prove_ontology_entailment as annot_owl_prove_entailment
+from gavel_owl.dialects.fowl.ontology_inference import prove_ontology_entailment as annot_owl_prove_entailment
 
 
 @click.group()

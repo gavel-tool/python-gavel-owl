@@ -5,7 +5,7 @@ from gavel.logic import problem, logic
 from gavel.logic.logic import UnaryConnective
 from gavel.logic.problem import AnnotatedFormula
 
-from gavel_owl.dialects.annotated_owl.parser import OntologyHandler
+from gavel_owl.dialects.fowl.parser import OntologyHandler
 
 # takes a premise ontology and a conjecture ontology, tries to prove satisfiability of premise ontology combined with
 # negation of each conjecture axiom
