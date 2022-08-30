@@ -216,7 +216,6 @@ class OntologyHandler:
     def get_annotation_properties(self):
         tptp_properties = []
         for name in self.tptp_annotation_properties:
-            print(name)
             match = self.app.getIRIMatch(self.ontology_path, name)
             tptp_properties.append(match)
         self.tptp_annotation_properties = tptp_properties
