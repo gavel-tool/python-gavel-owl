@@ -4,6 +4,10 @@ How to reconstruct the inconsistencies in OBI mentioned in Section 4.2 of the pa
 Download [OBI, v2022-07-11](https://raw.githubusercontent.com/obi-ontology/obi/v2022-07-11/obi.owl) and [BFO FOWL annotations only, v1](https://github.com/gavel-tool/BFOnow/blob/c51a7412d18dfbd772731147f783f6cd95bd0c37/bfo-fowl-v1-annotations-only.ofn). Use [robot](http://robot.obolibrary.org/python) to merge both ontologies:
 
     robot merge --input obi.owl --input bfo-fowl-v1-annotations-only.ofn --output obi-fowl.owl
+   
+If not done already, start the java server:
+
+    python3 -m gavel start-server
 
 Use [Gavel including the Gavel-OWL extension](https://github.com/gavel-tool/python-gavel-owl) to translate the resulting `obi-fowl.owl` to TPTP:
 
