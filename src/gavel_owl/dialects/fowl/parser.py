@@ -92,6 +92,40 @@ def parse_tptp_files(filenames):
         formulas += new_formulas
     return files, formulas
 
+def parse_clif_files(filenames):
+    files = []
+    formulas = []
+    for file in filenames:
+        with open(file) as f:
+            clif_axioms = []
+            open_brackets_count = 0
+            for l_ind, line in enumerate(f.readlines()):
+                line = line.replace('\n', ' ')
+                line = line.replace('\t', '')
+                for c_ind, char in enumerate(line):
+                    if char == '(':
+                        if open_brackets_count == 0:
+                            clif_axioms.append(char)
+                        else:
+                            clif_axioms[-1] = clif_axioms[-1] + char
+                        open_brackets_count += 1
+                    elif char == ')':
+                        open_brackets_count -= 1
+                        if open_brackets_count < 0:
+                            raise Exception(
+                                f'Found too many closing brackets in file {clif_file}, line {l_ind}, {c_ind}')
+                        clif_axioms[-1] = clif_axioms[-1] + char
+                    elif open_brackets_count > 0:
+                        clif_axioms[-1] = clif_axioms[-1] + char
+            if open_brackets_count > 0:
+                raise Exception(f'Found too many opening brackets in file {clif_file}')
+
+        clif_ax_no_comments = list(filter(lambda x: not x.startswith('(cl:comment'), clif_axioms))
+        clif_parsed = list(map(lambda x: parse_string(x)[0], clif_ax_no_comments))
+        clif_parsed = list(map(lambda x: find_variables(x, []), clif_parsed))
+        files += [file for _ in range(len(clif_parsed))]
+        formulas += clif_parsed
+    return files, formulas
 
 # function that replaces FOLSymbol with Gavel-Variable (if the symbol is quantified) or -Constant (else)
 def find_variables(element, variables):
@@ -155,8 +189,9 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
         clif_properties = kwargs["clif-properties"] if "clif-properties" in kwargs else None
         tptp_properties = kwargs["tptp-properties"] if "tptp-properties" in kwargs else None
         tptp_inputs = kwargs["tptp-input"] if "tptp-input" in kwargs else None
+        clif_inputs = kwargs["clif-input"] if "clif-input" in kwargs else None
         ontology_handler = OntologyHandler(ontology_path, jp, pp, verbose, tptp_properties,
-                                           clif_properties, use_readable_names, save_dol, tptp_inputs)
+                                           clif_properties, use_readable_names, save_dol, tptp_inputs, clif_inputs)
 
         gavel_problem, self.ontology_text_dol, self.name_mapping = ontology_handler.build_combined_theory()
 
@@ -186,7 +221,8 @@ def build_annotated_formulas(formulas, original_annotations):
 class OntologyHandler:
 
     def __init__(self, ontology, jp=25333, pp=25334, verbose=True, tptp_annotation_properties=None,
-                 clif_annotation_properties=None, use_readable_names=False, save_dol=False, tptp_inputs=None):
+                 clif_annotation_properties=None, use_readable_names=False, save_dol=False, tptp_inputs=None,
+                 clif_inputs=None):
 
         self.translation_mapping = None
         self.save_dol = save_dol
@@ -206,6 +242,9 @@ class OntologyHandler:
         if tptp_inputs is None:
             tptp_inputs = []
         self.tptp_inputs = tptp_inputs
+        if clif_inputs is None:
+            clif_inputs = []
+        self.clif_inputs = clif_inputs
 
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(port=int(self.jp)),
                                    callback_server_parameters=CallbackServerParameters(port=int(self.pp)))
@@ -286,9 +325,10 @@ class OntologyHandler:
             start = time.time()
 
         tptp_files_per_axiom, parsed_tptp_file_axioms = parse_tptp_files(self.tptp_inputs)
+        clif_files_per_axiom, parsed_clif_file_axioms = parse_clif_files(self.clif_inputs)
 
         parsed_formulas = list(convert_clif_to_internal_gavel(clif_annot)) + list(
-            convert_tptp_fragments_to_internal_gavel(tptp_annot)) + parsed_tptp_file_axioms
+            convert_tptp_fragments_to_internal_gavel(tptp_annot)) + parsed_clif_file_axioms + parsed_tptp_file_axioms
 
         if self.verbose:
             print(f'Parse to gavel time: {time.time() - start}')
@@ -310,7 +350,7 @@ class OntologyHandler:
         formulas_using_iris = apply_mapping(parsed_formulas, symbol_name_dict)
         annot_tptp_lines = build_annotated_formulas(formulas_using_iris,
                                                     list(map(lambda annot: ("annotation_axiom", annot), clif_annot + tptp_annot))
-                                                    + list(map(lambda file: ("axiom_from_file", file), tptp_files_per_axiom)))
+                                                    + list(map(lambda file: ("axiom_from_file", file), clif_files_per_axiom + tptp_files_per_axiom)))
         if self.verbose:
             print(f'Formulas with resolved names:')
             for f in annot_tptp_lines:
