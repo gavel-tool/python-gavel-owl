@@ -26,7 +26,8 @@ import os
 from gavel_owl import package_directory
 
 from gavel_owl.dialects.fowl.ontology_inference import prove_ontology_entailment as annot_owl_prove_entailment
-
+from gavel_owl.dialects.fowl.macleod_clif_parser import parse_string
+from gavel_owl.dialects.fowl.parser import find_variables
 
 @click.group()
 def owl():
