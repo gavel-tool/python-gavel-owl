@@ -124,6 +124,8 @@ There are several commands available that can be accessed via::
     - ``--save-dol`` (only for input dialect ``fowl``) This argument can be used to set a path under which to store the DOL-file generated from the annotated ontology.
 
     - ``--tptp-input`` (only for input dialect ``fowl``) Use this argument in combination with one or multiple filenames to add TPTP files to the ontology. The axioms in these files are treated like TPTP annotations.
+    
+    - ``--clif-input`` (only for input dialect `` fowl``) Similar to ``--tptp-input``, but for CLIF files. CLIF annotations are ignored. Advanced features such as imports or modules are not supported.
 
 - **check-consistency**: uses the OWL reasoner Hermit to determine whether a given ontology is consistent or not.
 
