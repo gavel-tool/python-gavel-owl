@@ -183,7 +183,7 @@ class AnnotatedOWLParser(base_parser.StringBasedParser):
     def parse_from_file(self, ontology_path, *args, **kwargs):
         jp = int(kwargs["jp"][0]) if "jp" in kwargs else 25333
         pp = int(kwargs["pp"][0]) if "pp" in kwargs else 25334
-        verbose = True if "verbose" in kwargs or "v" is kwargs else False
+        verbose = True if "verbose" in kwargs or "v" in kwargs else False
         use_readable_names = True if "readable-names" in kwargs else False
         save_dol = True if "save-dol" in kwargs else False
         clif_properties = kwargs["clif-properties"] if "clif-properties" in kwargs else None
