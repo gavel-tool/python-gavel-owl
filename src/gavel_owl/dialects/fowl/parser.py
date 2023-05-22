@@ -366,6 +366,8 @@ class OntologyHandler:
         kwargs = {}
         if self.use_readable_names:
             kwargs['readable-names'] = []
+            kwargs['jp'] = [self.jp]
+            kwargs['pp'] = [self.pp]
 
         owl_translation_parser = OWLParser()
         owl_translation = owl_translation_parser.parse_from_file(self.ontology_path, **kwargs)
