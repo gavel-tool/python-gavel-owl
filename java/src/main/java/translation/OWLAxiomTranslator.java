@@ -274,12 +274,16 @@ public class OWLAxiomTranslator extends OWLTranslator implements OWLAxiomVisitor
     //ReflexiveObjectProperty
     @Override
     public ArrayList<LogicElement> visit(OWLReflexiveObjectPropertyAxiom axiom) {
+        OWLDataFactory df = OWLManager.getOWLDataFactory();
         ArrayList<LogicElement> res = new ArrayList<>();
         Variable var1 = getUniqueVariable();
         res.add(new QuantifiedFormula(
             new Quantifier(0), // universal quantifier
             new Variable[]{var1},
-            axiom.getProperty().accept(new OWLPropertyExpressionTranslator(var1, var1))));
+            new BinaryFormula(
+                df.getOWLThing().accept(new OWLClassExpressionTranslator(var1)),
+                new BinaryConnective(3), // implication
+                axiom.getProperty().accept(new OWLPropertyExpressionTranslator(var1, var1)))));
         return res;
     }
 
